@@ -9,6 +9,32 @@ from frappe.model.document import Document
 class DATEVUnternehmenOnlineSettings(Document):
 	pass
 
+@frappe.whitelist()
+def get_options_for_recipient():
+
+	return {
+		"Sales Invoice": get_email_fields("Sales Invoice"),
+		"Purchase Invoice": get_email_fields("Purchase Invoice"),
+	}
+
+
+def get_email_fields(doctype):
+	meta = frappe.get_meta(doctype)
+	fields = []
+
+	for field in meta.fields:
+		if not field.options == "Email" and not field.fieldname == "contact_email":
+			continue
+
+		fields.append(
+			{
+				"value": field.fieldname,
+				"label": _("{0} ({1})").format(_(field.fieldname), _(field.label)),
+			}
+		)
+
+	return fields
+
 
 def send(doc, method):
 	settings = frappe.get_single("DATEV Unternehmen Online Settings")
@@ -30,11 +56,10 @@ def send(doc, method):
 		recipients=[doc.get(print_settings.recipient)],
 		subject=f"{_(doc.doctype)}: {_(doc.name)}",
 		sender=print_settings.sender,
-		message=_(f"New {0} {1} from ERPNext.").format(_(doc.doctype), _(doc.name)),
+		message=_("New {0} {1} from ERPNext.").format(_(doc.doctype), _(doc.name)),
 		reference_doctype=doc.doctype,
 		reference_name=doc.name,
 		attachments=attachments,
-		expose_recipients="header"
 	)
 
 
