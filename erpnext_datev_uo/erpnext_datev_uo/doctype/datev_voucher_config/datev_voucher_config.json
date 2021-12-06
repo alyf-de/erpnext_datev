@@ -38,16 +38,17 @@
   },
   {
    "fieldname": "recipient",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Recipient",
+   "options": "Email",
    "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-12-04 00:08:46.970856",
+ "modified": "2021-12-03 20:10:06.702799",
  "modified_by": "Administrator",
  "module": "Erpnext Datev Uo",
  "name": "DATEV Voucher Config",
