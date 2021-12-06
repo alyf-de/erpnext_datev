@@ -28,27 +28,30 @@ def send(doc, method):
 
 	frappe.sendmail(
 		recipients=[doc.get(print_settings.recipient)],
-		subject=f"{_(doc.doctype)}: {_(doc.name)}",
+		subject=f"{_(doc.doctype)}: {doc.name}",
 		sender=print_settings.sender,
-		message=_(f"New {0} {1} from ERPNext.").format(_(doc.doctype), _(doc.name)),
+		message=_("New {0} {1} from ERPNext.").format(_(doc.doctype), doc.name),
 		reference_doctype=doc.doctype,
 		reference_name=doc.name,
 		attachments=attachments,
-		expose_recipients="header"
 	)
 
 
 def get_attachments(print_settings, doc):
+	lang = (
+		doc.language
+		or frappe.db.get_value(
+			"Print Format", print_settings.print_format, "default_print_language"
+		)
+		or frappe.db.get_single_value("System Settings", "language")
+	)
 	attachments = [
 		{
 			"print_format_attachment": 1,
 			"doctype": doc.doctype,
 			"name": doc.name,
 			"print_format": print_settings.print_format,
-			"lang": frappe.db.get_value(
-				"Print Format", print_settings.print_format, "default_print_language"
-			)
-			or "de",
+			"lang": lang,
 		}
 	]
 
