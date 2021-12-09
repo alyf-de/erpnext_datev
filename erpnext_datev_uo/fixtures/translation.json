@@ -1,0 +1,50 @@
+[
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "de",
+  "modified": "2021-12-09 15:59:22.680380",
+  "name": "1804206bd0",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "source_text": "DATEV Voucher Config",
+  "translated_text": "DATEV Belegkonfiguration"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "de",
+  "modified": "2021-12-09 16:07:32.234691",
+  "name": "105afc9779",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "source_text": "DATEV Unternehmen Online Settings",
+  "translated_text": "DATEV Unternehmen Online-Einstellungen"
+ },
+ {
+  "context": null,
+  "contributed": 0,
+  "contribution_docname": null,
+  "contribution_status": "",
+  "docstatus": 0,
+  "doctype": "Translation",
+  "language": "de",
+  "modified": "2021-12-09 16:12:49.449482",
+  "name": "662ec34a30",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "source_text": "New {0} {1} sent by the ERPNext-DATEV integration.",
+  "translated_text": "Neue {0} {1} gesendet von der ERPNext-DATEV-Integration."
+ }
+]
