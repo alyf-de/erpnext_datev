@@ -1,13 +1,13 @@
 from . import __version__ as app_version
 
 app_name = "erpnext_datev_uo"
-app_title = "Erpnext Datev Uo"
-app_publisher = "Alyf"
-app_description = "Erpnext Datev Uo"
+app_title = "Erpnext Datev UO"
+app_publisher = "ALYF GmbH"
+app_description = "DATEV Unternehmen Online integration for ERPNext"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
-app_email = "hello@alyf.de"
-app_license = "MIT"
+app_email = "hallo@alyf.de"
+app_license = "GPLv3"
 
 # Includes in <head>
 # ------------------
