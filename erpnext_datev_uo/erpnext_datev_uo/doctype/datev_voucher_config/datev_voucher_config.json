@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "creation": "2021-12-03 18:53:41.716854",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -8,11 +7,11 @@
  "field_order": [
   "voucher_type",
   "print_format",
-  "sender",
   "recipient"
  ],
  "fields": [
   {
+   "columns": 2,
    "fieldname": "voucher_type",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -21,22 +20,16 @@
    "reqd": 1
   },
   {
+   "columns": 2,
    "fieldname": "print_format",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Print Format",
-   "options": "Print Format",
-   "reqd": 1
+   "mandatory_depends_on": "eval: doc.voucher_type === \"Sales Invoice\"",
+   "options": "Print Format"
   },
   {
-   "fieldname": "sender",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Sender",
-   "options": "Email Account",
-   "reqd": 1
-  },
-  {
+   "columns": 6,
    "fieldname": "recipient",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -45,10 +38,9 @@
    "reqd": 1
   }
  ],
- "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-12-03 20:10:06.702799",
+ "modified": "2021-12-09 15:01:14.518887",
  "modified_by": "Administrator",
  "module": "Erpnext Datev Uo",
  "name": "DATEV Voucher Config",
