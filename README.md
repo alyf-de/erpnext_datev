@@ -1,7 +1,7 @@
-## Erpnext Datev Uo
+## ERPNext - DATEV UO
 
-Erpnext Datev Uo
+[DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/online-anwendungen/datev-unternehmen-online/) integration for [ERPNext](https://github.com/frappe/erpnext).
 
-#### License
+## License
 
-MIT
+GPLv3
