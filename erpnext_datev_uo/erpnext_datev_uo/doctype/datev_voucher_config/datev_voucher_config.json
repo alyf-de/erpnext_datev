@@ -6,41 +6,60 @@
  "engine": "InnoDB",
  "field_order": [
   "voucher_type",
+  "recipient",
+  "attach_print",
   "print_format",
-  "recipient"
+  "attach_files"
  ],
  "fields": [
   {
    "columns": 2,
    "fieldname": "voucher_type",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Voucher Type",
-   "options": "\nSales Invoice\nPurchase Invoice",
+   "options": "DocType",
    "reqd": 1
   },
   {
-   "columns": 2,
+   "depends_on": "attach_print",
    "fieldname": "print_format",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Print Format",
-   "mandatory_depends_on": "eval: doc.voucher_type === \"Sales Invoice\"",
+   "mandatory_depends_on": "eval: doc.attach_print === 1",
    "options": "Print Format"
   },
   {
-   "columns": 6,
+   "columns": 4,
    "fieldname": "recipient",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Recipient",
    "options": "Email",
    "reqd": 1
+  },
+  {
+   "columns": 2,
+   "default": "0",
+   "description": "Send the voucher printed as PDF",
+   "fieldname": "attach_print",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Attach Print"
+  },
+  {
+   "columns": 2,
+   "default": "0",
+   "description": "Send files attached to the voucher",
+   "fieldname": "attach_files",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Attach Files"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2021-12-09 15:01:14.518887",
+ "modified": "2021-12-14 14:44:10.678868",
  "modified_by": "Administrator",
  "module": "Erpnext Datev Uo",
  "name": "DATEV Voucher Config",

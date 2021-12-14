@@ -8,7 +8,14 @@ from frappe.core.doctype.communication.email import make as make_communication
 
 
 class DATEVUnternehmenOnlineSettings(Document):
-	pass
+	def validate(self):
+		for voucher_config in self.datev_voucher_config:
+			if not voucher_config.attach_print and not voucher_config.attach_files:
+				frappe.throw(
+					_("Please configure attachments for {}.").format(
+						_(voucher_config.voucher_type)
+					)
+				)
 
 
 def send(doc, method):
@@ -21,14 +28,24 @@ def send(doc, method):
 		return
 
 	attachments = []
-	if doc.doctype == "Sales Invoice":
+
+	if voucher_config.attach_print:
 		attachments.append(
 			get_print_config(
 				doc.doctype, doc.name, voucher_config.print_format, doc.language
 			)
 		)
-	elif doc.doctype == "Purchase Invoice":
+
+	if voucher_config.attach_files:
 		attachments.extend(get_attached_files(doc.doctype, doc.name))
+
+	if not attachments:
+		frappe.msgprint(
+			# fmt: off
+			_("{} was not sent to DATEV because no attachments have been found.").format(_(doc.doctype))
+			# fmt: on
+		)
+		return
 
 	make_communication(
 		doctype=doc.doctype,
