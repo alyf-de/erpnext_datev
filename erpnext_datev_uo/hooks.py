@@ -12,7 +12,22 @@ app_license = "GPLv3"
 fixtures = [
 	{
 		"dt": "Translation",
-		"filters": {"name": ("in", ("1804206bd0", "105afc9779", "662ec34a30"))}
+		"filters": {
+			"name": (
+				"in",
+				(
+					"1804206bd0",
+					"105afc9779",
+					"662ec34a30",
+					"6a5fd5f6cd",
+					"ee1a71ae8f",
+					"a7f4032fe7",
+					"281c868836",
+					"5aad12cb69",
+					"7e6f025283",
+				),
+			)
+		},
 	}
 ]
 
@@ -111,7 +126,7 @@ doc_events = {
 	},
 	"Purchase Invoice": {
 		"on_submit": "erpnext_datev_uo.erpnext_datev_uo.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
-	}
+	},
 }
 
 # Scheduled Tasks
@@ -188,4 +203,3 @@ doc_events = {
 
 # auth_hooks = [
 #	"erpnext_datev_uo.auth.validate"# ]
-

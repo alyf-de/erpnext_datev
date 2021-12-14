@@ -12,7 +12,7 @@ class DATEVUnternehmenOnlineSettings(Document):
 		for voucher_config in self.datev_voucher_config:
 			if not voucher_config.attach_print and not voucher_config.attach_files:
 				frappe.throw(
-					_("Please configure attachments for {}.").format(
+					_("Please configure attachments for voucher type {}.").format(
 						_(voucher_config.voucher_type)
 					)
 				)
