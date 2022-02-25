@@ -19,6 +19,8 @@ Integration with [DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/
 7. Enable "Add Attachments" or "Add Print"
 8. Save
 
+![datev-unternehmen-online-settings](https://user-images.githubusercontent.com/14891507/155744820-f7eb3aa7-ba36-4a66-aa12-80e75fc467de.png)
+
 ## Disclaimer
 
 DATEV Unternehmen Online is a trademark of [DATEV eG](https://www.datev.de/). This integration is not approved or endorsed by DATEV.
