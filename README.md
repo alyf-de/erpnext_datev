@@ -8,7 +8,7 @@ Integration with [DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/
 2. In Step 2 ("Select apps to install"), select "ERPNext" and "DATEV Unternehmen Online Integration".
 3. Complete the new site wizard.
 
-## Setup
+## Setup [en]
 
 1. Open **DATEV Unternehmen Online Settings**
 2. Enable the integration
@@ -20,6 +20,18 @@ Integration with [DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/
 9. Save
 
 ![datev-unternehmen-online-settings](https://user-images.githubusercontent.com/14891507/155744820-f7eb3aa7-ba36-4a66-aa12-80e75fc467de.png)
+
+## Einrichtung [de]
+
+1. Öffnen Sie **DATEV Unternehmen Online-Einstellungen** (engl. **DATEV Unternehmen Online Settings**)
+2. Aktivieren Sie die Integration
+3. Wählen Sie das _E-Mail-Konto_ (engl. _Email Account_) aus, das für den Versand von Belegen an DATEV Unternehmen Online verwendet werden soll
+4. Fügen Sie der Tabelle eine Zeile hinzu
+5. Wählen Sie die _Belegart_ (engl. _Voucher Type_)
+6. Fügen Sie die für diese Belegart von DATEV Unternehmen Online bereitgestellte Ziel-E-Mail-Adresse ein (mehr dazu im [DATEV Help Center](https://apps.datev.de/help-center/documents/1007550) oder auf [YouTube](https://youtu.be/ZiISSXqX3KM))
+    > **Achtung:** Die E-Mail-Adresse des Senders muss mit dem in Schritt 3 ausgewählten E-Mail-Konto übereinstimmen
+8. Aktivieren Sie "Anhänge hinzufügen" oder "Druck hinzufügen".
+9. Speichern Sie die **DATEV Unternehmen Online-Einstellungen**
 
 ## Disclaimer
 
