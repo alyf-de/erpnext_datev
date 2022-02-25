@@ -15,9 +15,9 @@ Integration with [DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/
 3. Select the _Email Account_ that should be used to send receipts to DATEV Unternehmen Online
 4. Add a row to the table
 5. Select the _Voucher Type_ (**Sales Invoice**, **Purchase Invoice** or **Expense Claim**)
-6. Paste the target email address provided by DATEV Unternehmen Online
-7. Enable "Add Attachments" or "Add Print"
-8. Save
+6. Paste the target email address provided by DATEV Unternehmen Online ([DATEV Help Center](https://apps.datev.de/help-center/documents/1007550) / [YouTube](https://youtu.be/ZiISSXqX3KM))
+8. Enable "Add Attachments" or "Add Print"
+9. Save
 
 ![datev-unternehmen-online-settings](https://user-images.githubusercontent.com/14891507/155744820-f7eb3aa7-ba36-4a66-aa12-80e75fc467de.png)
 
