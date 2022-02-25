@@ -127,6 +127,9 @@ doc_events = {
 	"Purchase Invoice": {
 		"on_submit": "erpnext_datev_uo.erpnext_datev_uo.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
 	},
+	"Expense Claim": {
+		"on_submit": "erpnext_datev_uo.erpnext_datev_uo.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
+	},
 }
 
 # Scheduled Tasks
