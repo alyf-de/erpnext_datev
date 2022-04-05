@@ -4,3 +4,4 @@
 *.swp
 tags
 erpnext_datev_uo/docs/current
+build/

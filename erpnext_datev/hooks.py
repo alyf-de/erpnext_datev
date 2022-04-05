@@ -88,7 +88,7 @@ fixtures = [
 # ------------
 
 # before_install = "erpnext_datev_uo.install.before_install"
-# after_install = "erpnext_datev_uo.install.after_install"
+after_install = "erpnext_datev_uo.install.after_install"
 
 # Desk Notifications
 # ------------------
