@@ -3,5 +3,5 @@
 *.egg-info
 *.swp
 tags
-erpnext_datev_uo/docs/current
+erpnext_datev/docs/current
 build/

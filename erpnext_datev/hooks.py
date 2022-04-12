@@ -1,9 +1,9 @@
 from . import __version__ as app_version
 
-app_name = "erpnext_datev_uo"
-app_title = "Erpnext Datev UO"
+app_name = "erpnext_datev"
+app_title = "ERPNext DATEV Integration"
 app_publisher = "ALYF GmbH"
-app_description = "DATEV Unternehmen Online integration for ERPNext"
+app_description = "DATEV integration for ERPNext"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "hallo@alyf.de"
@@ -35,15 +35,15 @@ fixtures = [
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/erpnext_datev_uo/css/erpnext_datev_uo.css"
-# app_include_js = "/assets/erpnext_datev_uo/js/erpnext_datev_uo.js"
+# app_include_css = "/assets/erpnext_datev/css/erpnext_datev.css"
+# app_include_js = "/assets/erpnext_datev/js/erpnext_datev.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/erpnext_datev_uo/css/erpnext_datev_uo.css"
-# web_include_js = "/assets/erpnext_datev_uo/js/erpnext_datev_uo.js"
+# web_include_css = "/assets/erpnext_datev/css/erpnext_datev.css"
+# web_include_js = "/assets/erpnext_datev/js/erpnext_datev.js"
 
 # include custom scss in every website theme (without file extension ".scss")
-# website_theme_scss = "erpnext_datev_uo/public/scss/website"
+# website_theme_scss = "erpnext_datev/public/scss/website"
 
 # include js, css files in header of web form
 # webform_include_js = {"doctype": "public/js/doctype.js"}
@@ -80,21 +80,21 @@ fixtures = [
 
 # add methods and filters to jinja environment
 # jinja = {
-#	"methods": "erpnext_datev_uo.utils.jinja_methods",
-#	"filters": "erpnext_datev_uo.utils.jinja_filters"
+#	"methods": "erpnext_datev.utils.jinja_methods",
+#	"filters": "erpnext_datev.utils.jinja_filters"
 # }
 
 # Installation
 # ------------
 
-# before_install = "erpnext_datev_uo.install.before_install"
-after_install = "erpnext_datev_uo.install.after_install"
+# before_install = "erpnext_datev.install.before_install"
+after_install = "erpnext_datev.install.after_install"
 
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config
 
-# notification_config = "erpnext_datev_uo.notifications.get_notification_config"
+# notification_config = "erpnext_datev.notifications.get_notification_config"
 
 # Permissions
 # -----------
@@ -122,13 +122,13 @@ after_install = "erpnext_datev_uo.install.after_install"
 
 doc_events = {
 	"Sales Invoice": {
-		"on_submit": "erpnext_datev_uo.erpnext_datev_uo.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
+		"on_submit": "erpnext_datev.erpnext_datev.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
 	},
 	"Purchase Invoice": {
-		"on_submit": "erpnext_datev_uo.erpnext_datev_uo.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
+		"on_submit": "erpnext_datev.erpnext_datev.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
 	},
 	"Expense Claim": {
-		"on_submit": "erpnext_datev_uo.erpnext_datev_uo.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
+		"on_submit": "erpnext_datev.erpnext_datev.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
 	},
 }
 
@@ -137,39 +137,39 @@ doc_events = {
 
 # scheduler_events = {
 #	"all": [
-#		"erpnext_datev_uo.tasks.all"
+#		"erpnext_datev.tasks.all"
 #	],
 #	"daily": [
-#		"erpnext_datev_uo.tasks.daily"
+#		"erpnext_datev.tasks.daily"
 #	],
 #	"hourly": [
-#		"erpnext_datev_uo.tasks.hourly"
+#		"erpnext_datev.tasks.hourly"
 #	],
 #	"weekly": [
-#		"erpnext_datev_uo.tasks.weekly"
+#		"erpnext_datev.tasks.weekly"
 #	],
 #	"monthly": [
-#		"erpnext_datev_uo.tasks.monthly"
+#		"erpnext_datev.tasks.monthly"
 #	],
 # }
 
 # Testing
 # -------
 
-# before_tests = "erpnext_datev_uo.install.before_tests"
+# before_tests = "erpnext_datev.install.before_tests"
 
 # Overriding Methods
 # ------------------------------
 #
 # override_whitelisted_methods = {
-#	"frappe.desk.doctype.event.event.get_events": "erpnext_datev_uo.event.get_events"
+#	"frappe.desk.doctype.event.event.get_events": "erpnext_datev.event.get_events"
 # }
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
 # override_doctype_dashboards = {
-#	"Task": "erpnext_datev_uo.task.get_dashboard_data"
+#	"Task": "erpnext_datev.task.get_dashboard_data"
 # }
 
 # exempt linked doctypes from being automatically cancelled
@@ -205,4 +205,4 @@ doc_events = {
 # --------------------------------
 
 # auth_hooks = [
-#	"erpnext_datev_uo.auth.validate"# ]
+#	"erpnext_datev.auth.validate"# ]
