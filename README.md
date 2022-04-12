@@ -16,6 +16,17 @@ Integration between [ERPNext](https://github.com/frappe/erpnext) and DATEV.
 2. In Step 2 ("Select apps to install"), select "ERPNext" and "DATEV Unternehmen Online Integration".
 3. Complete the new site wizard.
 
+
+## Setup DATEV CSV Export
+
+1. Datev Settings
+
+    Configure you client number, you tax consultant's number and a temporary against account.
+
+2. DATEV Report
+
+    Now you can use the report "DATEV". This is a preview of the transactions data. It can be exported, along with the master data, as zip file via the report's menu. Your tax xonsultant can then import your GL Entries into his DATEV system.
+
 ## Setup DATEV Unternehmen Online [en]
 
 1. Open **DATEV Unternehmen Online Settings**
