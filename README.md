@@ -1,6 +1,14 @@
-## ERPNext - DATEV UO
+## ERPNext - DATEV Integration
 
-Integration with [DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/online-anwendungen/datev-unternehmen-online/) for [ERPNext](https://github.com/frappe/erpnext).
+Integration between [ERPNext](https://github.com/frappe/erpnext) and DATEV.
+
+- [DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/online-anwendungen/datev-unternehmen-online/)
+
+    When a voucher is submitted, it will be sent to DATEV Unternehmen Online by email. Either by converting the document to PDF first (outgoing vouchers) or by sending files attached to the document (incoming vouchers).
+
+- DATEV CSV Export
+
+    Export raw **GL Entries** from ERPNext in the DATEV CSV format.
 
 ## Install on Frappe Cloud
 
@@ -8,7 +16,7 @@ Integration with [DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/
 2. In Step 2 ("Select apps to install"), select "ERPNext" and "DATEV Unternehmen Online Integration".
 3. Complete the new site wizard.
 
-## Setup [en]
+## Setup DATEV Unternehmen Online [en]
 
 1. Open **DATEV Unternehmen Online Settings**
 2. Enable the integration
@@ -21,7 +29,7 @@ Integration with [DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/
 
 ![datev-unternehmen-online-settings](https://user-images.githubusercontent.com/14891507/155744820-f7eb3aa7-ba36-4a66-aa12-80e75fc467de.png)
 
-## Einrichtung [de]
+## Einrichtung DATEV Unternehmen Online [de]
 
 1. Öffnen Sie **DATEV Unternehmen Online-Einstellungen** (engl. **DATEV Unternehmen Online Settings**)
 2. Aktivieren Sie die Integration
@@ -35,7 +43,7 @@ Integration with [DATEV Unternehmen Online](https://www.datev.de/web/de/mydatev/
 
 ## Disclaimer
 
-DATEV Unternehmen Online is a trademark of [DATEV eG](https://www.datev.de/). This integration is not approved or endorsed by DATEV.
+"DATEV" and "DATEV Unternehmen Online" are trademarks of [DATEV eG](https://www.datev.de/). This integration is not approved or endorsed by DATEV eG.
 
 ## License
 
