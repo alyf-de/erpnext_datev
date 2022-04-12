@@ -4,6 +4,7 @@ app_name = "erpnext_datev"
 app_title = "ERPNext DATEV Integration"
 app_publisher = "ALYF GmbH"
 app_description = "DATEV integration for ERPNext"
+required_apps = ["erpnext"]
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "hallo@alyf.de"
