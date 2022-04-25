@@ -1,0 +1,44 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-04-25 16:42:37.689683",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends": "Integrations",
+ "extends_another_page": 1,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "ERPNext DATEV",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "DATEV",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "",
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "DATEV Unternehmen Online Settings",
+   "link_to": "DATEV Unternehmen Online Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2022-04-25 16:42:37.689683",
+ "modified_by": "Administrator",
+ "module": "Erpnext Datev Uo",
+ "name": "ERPNext DATEV",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 0,
+ "shortcuts": []
+}
