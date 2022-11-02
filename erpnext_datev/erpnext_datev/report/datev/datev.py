@@ -556,7 +556,7 @@ def download_datev_csv(filters):
 	Validate the filters, get the data, produce the CSV file and provide it for
 	download. Can be called like this:
 
-	GET /api/method/erpnext_germany.erpnext_germany.report.datev.datev.download_datev_csv
+	GET /api/method/erpnext_datev.erpnext_datev.report.datev.datev.download_datev_csv
 
 	Arguments / Params:
 	filters -- dict of filters to be passed to the sql query

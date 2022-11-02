@@ -48,7 +48,7 @@ frappe.query_reports["DATEV"] = {
 		query_report.page.add_menu_item(__("Download DATEV File"), () => {
 			const filters = encodeURIComponent(JSON.stringify(query_report.get_values()));
 			window.open(
-				`/api/method/erpnext_germany.erpnext_germany.report.datev.datev.download_datev_csv?filters=${filters}`
+				`/api/method/erpnext_datev.erpnext_datev.report.datev.datev.download_datev_csv?filters=${filters}`
 			);
 		});
 
