@@ -10,27 +10,7 @@ app_color = "grey"
 app_email = "hallo@alyf.de"
 app_license = "GPLv3"
 
-fixtures = [
-	{
-		"dt": "Translation",
-		"filters": {
-			"name": (
-				"in",
-				(
-					"1804206bd0",
-					"105afc9779",
-					"662ec34a30",
-					"6a5fd5f6cd",
-					"ee1a71ae8f",
-					"a7f4032fe7",
-					"281c868836",
-					"5aad12cb69",
-					"7e6f025283",
-				),
-			)
-		},
-	}
-]
+# fixtures = []
 
 # Includes in <head>
 # ------------------
