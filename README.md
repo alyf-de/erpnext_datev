@@ -52,6 +52,10 @@ Integration between [ERPNext](https://github.com/frappe/erpnext) and DATEV.
 8. Aktivieren Sie "Anhänge hinzufügen" oder "Druck hinzufügen".
 9. Speichern Sie die **DATEV Unternehmen Online-Einstellungen**
 
+## Kompatibilität mit _PDF on Submit_
+
+Falls Sie [PDF on Submit](https://github.com/alyf-de/erpnext_pdf-on-submit) für dieselbe Belegart verwenden, wählen Sie "Anhänge hinzufügen" statt "Druck hinzufügen". _PDF on Submit_ fügt dann die PDF-Datei als Anhang zum Beleg hinzu und die DATEV-Integration versendet diesen.
+
 ## Disclaimer
 
 "DATEV" and "DATEV Unternehmen Online" are trademarks of [DATEV eG](https://www.datev.de/). This integration is not approved or endorsed by DATEV eG.
