@@ -102,13 +102,7 @@ after_install = "erpnext_datev.install.after_install"
 # Hook on document methods and events
 
 doc_events = {
-	"Sales Invoice": {
-		"on_submit": "erpnext_datev.erpnext_datev.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
-	},
-	"Purchase Invoice": {
-		"on_submit": "erpnext_datev.erpnext_datev.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
-	},
-	"Expense Claim": {
+	"*": {
 		"on_submit": "erpnext_datev.erpnext_datev.doctype.datev_unternehmen_online_settings.datev_unternehmen_online_settings.send",
 	},
 }
