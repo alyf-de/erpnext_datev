@@ -79,84 +79,47 @@ def get_header(filters, csv_class):
 	coa = frappe.get_value('Company', company, 'chart_of_accounts')
 	coa_short_code = '04' if 'SKR04' in coa else ('03' if 'SKR03' in coa else '')
 
-	header = [
-		# DATEV format
-		#	"DTVF" = created by DATEV software,
-		#	"EXTF" = created by other software
+	return [
 		'"EXTF"',
-		# version of the DATEV format
-		#	141 = 1.41, 
-		#	510 = 5.10,
-		#	720 = 7.20
 		'700',
 		csv_class.DATA_CATEGORY,
-		'"%s"' % csv_class.FORMAT_NAME,
-		# Format version (regarding format name)
+		f'"{csv_class.FORMAT_NAME}"',
 		csv_class.FORMAT_VERSION,
-		# Generated on
 		datetime.datetime.now().strftime('%Y%m%d%H%M%S') + '000',
-		# Imported on -- stays empty
 		'',
-		# Origin. Any two symbols, will be replaced by "SV" on import.
 		'"EN"',
-		# I = Exported by
-		'"%s"' % frappe.session.user,
-		# J = Imported by -- stays empty
+		f'"{frappe.session.user}"',
 		'',
-		# K = Tax consultant number (Beraternummer)
 		datev_settings.get('consultant_number', '0000000'),
-		# L = Tax client number (Mandantennummer)
 		datev_settings.get('client_number', '00000'),
-		# M = Start of the fiscal year (Wirtschaftsjahresbeginn)
 		frappe.utils.formatdate(filters.get('fiscal_year_start'), 'yyyyMMdd'),
-		# N = Length of account numbers (Sachkontenlänge)
 		str(filters.get('account_number_length', 4)),
-		# O = Transaction batch start date (YYYYMMDD)
-		frappe.utils.formatdate(filters.get('from_date'), 'yyyyMMdd') if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS else '',
-		# P = Transaction batch end date (YYYYMMDD)
-		frappe.utils.formatdate(filters.get('to_date'), 'yyyyMMdd') if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS else '',
-		# Q = Description (for example, "Sales Invoice") Max. 30 chars
-		'"{}"'.format(_(description)) if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS else '',
-		# R = Diktatkürzel
+		frappe.utils.formatdate(filters.get('from_date'), 'yyyyMMdd')
+		if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS
+		else '',
+		frappe.utils.formatdate(filters.get('to_date'), 'yyyyMMdd')
+		if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS
+		else '',
+		f'"{_(description)}"'
+		if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS
+		else '',
 		'',
-		# S = Buchungstyp
-		#	1 = Transaction batch (Finanzbuchführung),
-		#	2 = Annual financial statement (Jahresabschluss)
 		'1' if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS else '',
-		# T = Rechnungslegungszweck
-		#	0 oder leer = vom Rechnungslegungszweck unabhängig
-		#	50 = Handelsrecht
-		#	30 = Steuerrecht
-		#	64 = IFRS
-		#	40 = Kalkulatorik
-		#	11 = Reserviert
-		#	12 = Reserviert
 		'0' if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS else '',
-		# U = Festschreibung
-		# TODO: Filter by Accounting Period. In export for closed Accounting Period, this will be "1"
 		'0',
-		# V = Default currency, for example, "EUR"
-		'"%s"' % default_currency if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS else '',
-		# reserviert
+		f'"{default_currency}"'
+		if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS
+		else '',
 		'',
-		# Derivatskennzeichen
 		'',
-		# reserviert
 		'',
-		# reserviert
 		'',
-		# SKR
-		'"%s"' % coa_short_code,
-		# Branchen-Lösungs-ID
+		f'"{coa_short_code}"',
 		'',
-		# reserviert
 		'',
-		# reserviert
 		'',
-		# Anwendungsinformation (Verarbeitungskennzeichen der abgebenden Anwendung)
-		''
+		'',
 	]
-	return header
 
 
 def zip_and_download(zip_filename, csv_files):

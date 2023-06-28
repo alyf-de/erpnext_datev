@@ -180,9 +180,7 @@ def validate(filters):
 	validate_fiscal_year(from_date, to_date, company)
 
 	if not frappe.db.exists("DATEV Settings", filters.get("company")):
-		msg = "Please create DATEV Settings for Company {}".format(
-			filters.get("company")
-		)
+		msg = f'Please create DATEV Settings for Company {filters.get("company")}'
 		frappe.log_error(msg, title="DATEV Settings missing")
 		return False
 
@@ -299,7 +297,17 @@ def get_purchase_invoice_params(filters):
 
 
 def get_generic_params(filters):
-	# produce empty fields so all rows will have the same length
+	extra_joins = ""
+
+	if filters.get("exclude_voucher_types"):
+		# exclude voucher types that are queried by a dedicated method
+		exclude = f"""({", ".join(f"'{key}'" for key in filters.get("exclude_voucher_types"))})"""
+		extra_filters = f"AND gl.voucher_type NOT IN {exclude}"
+
+	# if voucher type filter is set, allow only this type
+	if filters.get("voucher_type"):
+		extra_filters += " AND gl.voucher_type = %(voucher_type)s"
+
 	extra_fields = """
 		, '' as 'Beleginfo - Art 5'
 		, '' as 'Beleginfo - Inhalt 5'
@@ -307,21 +315,6 @@ def get_generic_params(filters):
 		, '' as 'Beleginfo - Inhalt 6'
 		, '' as 'Fälligkeit'
 	"""
-	extra_joins = ""
-
-	if filters.get("exclude_voucher_types"):
-		# exclude voucher types that are queried by a dedicated method
-		exclude = "({})".format(
-			", ".join(
-				"'{}'".format(key) for key in filters.get("exclude_voucher_types")
-			)
-		)
-		extra_filters = "AND gl.voucher_type NOT IN {}".format(exclude)
-
-	# if voucher type filter is set, allow only this type
-	if filters.get("voucher_type"):
-		extra_filters += " AND gl.voucher_type = %(voucher_type)s"
-
 	return extra_fields, extra_joins, extra_filters
 
 
@@ -391,9 +384,7 @@ def run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1):
 		extra_fields=extra_fields, extra_joins=extra_joins, extra_filters=extra_filters
 	)
 
-	gl_entries = frappe.db.sql(query, filters, as_dict=as_dict)
-
-	return gl_entries
+	return frappe.db.sql(query, filters, as_dict=as_dict)
 
 
 def get_customers(filters):
@@ -585,7 +576,7 @@ def download_datev_csv(filters):
 	customers = get_customers(filters)
 	suppliers = get_suppliers(filters)
 
-	zip_name = "{} DATEV.zip".format(frappe.utils.datetime.date.today())
+	zip_name = f"{frappe.utils.datetime.date.today()} DATEV.zip"
 	zip_and_download(
 		zip_name,
 		[

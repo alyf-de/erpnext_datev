@@ -75,13 +75,12 @@ def attach_print(doctype, name, language, print_format):
 
 
 def get_voucher_config(settings: DATEVUnternehmenOnlineSettings, doctype: str):
-	voucher_config = settings.get(
+	if voucher_config := settings.get(
 		"datev_voucher_config", filters={"voucher_type": doctype}
-	)
-	if not voucher_config:
+	):
+		return voucher_config[0]
+	else:
 		return
-
-	return voucher_config[0]
 
 
 def get_attached_files(doctype: str, docname: str):
