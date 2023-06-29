@@ -29,7 +29,7 @@ frappe.query_reports["DATEV"] = {
 			label: __("Voucher Type"),
 			fieldtype: "Select",
 			options:
-				"\nSales Invoice\nPurchase Invoice\nPayment Entry\nExpense Claim\nPayroll Entry\nBank Reconciliation\nAsset\nStock Entry",
+				"\nSales Invoice\nPurchase Invoice\nPayment Entry\nExpense Claim\nPayroll Entry\nBank Reconciliation\nAsset\nStock Entry\nJournal Entry",
 		},
 	],
 	onload: function (query_report) {
