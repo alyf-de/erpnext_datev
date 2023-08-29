@@ -5,7 +5,6 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.core.doctype.communication.email import make as make_communication
-from frappe.utils.file_manager import save_file
 from frappe.translate import print_language
 
 class DATEVUnternehmenOnlineSettings(Document):
@@ -70,7 +69,14 @@ def attach_print(doctype, name, language, print_format):
 	with print_language(language):
 		data = frappe.get_print(doctype, name, print_format, as_pdf=True)
 
-	file = save_file(f"{name}.pdf", data, doctype, name, is_private=1)
+	file = frappe.new_doc("File")
+	file.file_name = f"{name}.pdf"
+	file.content = data
+	file.attached_to_doctype = doctype
+	file.attached_to_name = name
+	file.is_private = 1
+	file.save()
+
 	return file.name
 
 
