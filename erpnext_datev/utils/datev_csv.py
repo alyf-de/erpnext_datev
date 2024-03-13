@@ -34,7 +34,7 @@ def get_datev_csv(data, filters, csv_class):
 		result['Beleginfo - Inhalt 6'] = result['Beleginfo - Inhalt 6'].dt.strftime('%d%m%Y')
 
 		result['Fälligkeit'] = pd.to_datetime(result['Fälligkeit'])
-		result['Fälligkeit'] = result['Fälligkeit'].dt.strftime('%d%m%y')
+		result['Fälligkeit'] = result['Fälligkeit'].dt.strftime('%d%m%Y')
 
 		result.sort_values(by='Belegdatum', inplace=True, kind='stable', ignore_index=True)
 
