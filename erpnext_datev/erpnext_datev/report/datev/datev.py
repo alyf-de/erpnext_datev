@@ -349,10 +349,10 @@ def run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1):
 		SELECT
 
 			/* either debit or credit amount; always positive */
-			case gl.debit when 0 then gl.credit else gl.debit end as 'Umsatz (ohne Soll/Haben-Kz)',
+			case ROUND(gl.debit, 2) when 0 then ROUND(gl.credit, 2) else ROUND(gl.debit, 2) end as 'Umsatz (ohne Soll/Haben-Kz)',
 
 			/* 'H' when credit, 'S' when debit */
-			case gl.debit when 0 then 'H' else 'S' end as 'Soll/Haben-Kennzeichen',
+			case ROUND(gl.debit, 2) when 0 then 'H' else 'S' end as 'Soll/Haben-Kennzeichen',
 
 			/* account number or, if empty, party account number */
 			acc.account_number as 'Konto',
