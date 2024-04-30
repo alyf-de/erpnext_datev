@@ -25,7 +25,7 @@ def get_datev_csv(data, filters, csv_class):
 	"""
 	empty_df = pd.DataFrame(columns=csv_class.COLUMNS)
 	data_df = pd.DataFrame.from_records(data)
-	result = empty_df.append(data_df, sort=True)
+	result = pd.concat([empty_df, data_df], ignore_index=True)
 
 	if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS:
 		result['Belegdatum'] = pd.to_datetime(result['Belegdatum'])
@@ -36,7 +36,7 @@ def get_datev_csv(data, filters, csv_class):
 		result['Fälligkeit'] = pd.to_datetime(result['Fälligkeit'])
 		result['Fälligkeit'] = result['Fälligkeit'].dt.strftime('%d%m%Y')
 
-		result.sort_values(by='Belegdatum', inplace=True, kind='stable', ignore_index=True)
+		result = result.sort_values(by='Belegdatum', kind='stable', ignore_index=True)
 
 	if csv_class.DATA_CATEGORY == DataCategory.ACCOUNT_NAMES:
 		result['Sprach-ID'] = 'de-DE'
@@ -51,7 +51,7 @@ def get_datev_csv(data, filters, csv_class):
 		# format date as DDMM
 		date_format='%d%m',
 		# Windows line terminator
-		line_terminator='\r\n',
+		lineterminator='\r\n',
 		# Do not number rows
 		index=False,
 		# Use all columns defined above
@@ -85,7 +85,7 @@ def get_header(filters, csv_class):
 		#	"EXTF" = created by other software
 		'"EXTF"',
 		# version of the DATEV format
-		#	141 = 1.41, 
+		#	141 = 1.41,
 		#	510 = 5.10,
 		#	720 = 7.20
 		'700',
