@@ -1,19 +1,5 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
-with open("requirements.txt") as f:
-	install_requires = f.read().strip().split("\n")
+name = "erpnext_datev"
 
-# get version from __version__ variable in erpnext_datev/__init__.py
-from erpnext_datev import __version__ as version
-
-setup(
-	name="erpnext_datev",
-	version=version,
-	description="ERPNext DATEV Inegration",
-	author="ALYF GmbH",
-	author_email="hallo@alyf.de",
-	packages=find_packages(),
-	zip_safe=False,
-	include_package_data=True,
-	install_requires=install_requires
-)
+setup()
