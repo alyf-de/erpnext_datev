@@ -3,9 +3,10 @@
 
 import frappe
 from frappe import _
-from frappe.model.document import Document
 from frappe.core.doctype.communication.email import make as make_communication
+from frappe.model.document import Document
 from frappe.translate import print_language
+
 
 class DATEVUnternehmenOnlineSettings(Document):
 	def validate(self):
@@ -52,9 +53,7 @@ def send(doc, method):
 	make_communication(
 		doctype=doc.doctype,
 		name=doc.name,
-		content=_("New {0} {1} sent by the ERPNext-DATEV integration.").format(
-			_(doc.doctype), doc.name
-		),
+		content=_("New {0} {1} sent by the ERPNext-DATEV integration.").format(_(doc.doctype), doc.name),
 		subject=f"{_(doc.doctype)}: {doc.name}",
 		sender=frappe.get_value("Email Account", settings.sender, "email_id"),
 		recipients=[voucher_config.recipient],
@@ -81,9 +80,7 @@ def attach_print(doctype, name, language, print_format):
 
 
 def get_voucher_config(settings: DATEVUnternehmenOnlineSettings, doctype: str):
-	voucher_config = settings.get(
-		"datev_voucher_config", filters={"voucher_type": doctype}
-	)
+	voucher_config = settings.get("datev_voucher_config", filters={"voucher_type": doctype})
 	if not voucher_config:
 		return
 

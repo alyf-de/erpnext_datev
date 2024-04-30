@@ -3,17 +3,11 @@ from io import BytesIO
 from unittest import TestCase
 
 import frappe
-from frappe.utils import cstr, now_datetime, today
-
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import (
 	create_sales_invoice,
 )
-from erpnext_datev.utils.datev_constants import (
-	AccountNames,
-	DebtorsCreditors,
-	Transactions,
-)
-from erpnext_datev.utils.datev_csv import get_datev_csv, get_header
+from frappe.utils import cstr, now_datetime, today
+
 from erpnext_datev.erpnext_datev.report.datev.datev import (
 	download_datev_csv,
 	get_account_names,
@@ -21,6 +15,12 @@ from erpnext_datev.erpnext_datev.report.datev.datev import (
 	get_suppliers,
 	get_transactions,
 )
+from erpnext_datev.utils.datev_constants import (
+	AccountNames,
+	DebtorsCreditors,
+	Transactions,
+)
+from erpnext_datev.utils.datev_csv import get_datev_csv, get_header
 
 
 def make_company(company_name, abbr):
@@ -122,9 +122,7 @@ def make_item(item_code, company):
 				"is_stock_item": 0,
 				"is_purchase_item": 0,
 				"is_customer_provided_item": 0,
-				"item_defaults": [
-					{"default_warehouse": warehouse_name, "company": company.name}
-				],
+				"item_defaults": [{"default_warehouse": warehouse_name, "company": company.name}],
 			}
 		)
 		item.insert()
@@ -228,15 +226,9 @@ class TestDatev(TestCase):
 		self.assertTrue(is_subset(get_account_names, AccountNames.COLUMNS))
 
 	def test_header(self):
-		self.assertTrue(
-			Transactions.DATA_CATEGORY in get_header(self.filters, Transactions)
-		)
-		self.assertTrue(
-			AccountNames.DATA_CATEGORY in get_header(self.filters, AccountNames)
-		)
-		self.assertTrue(
-			DebtorsCreditors.DATA_CATEGORY in get_header(self.filters, DebtorsCreditors)
-		)
+		self.assertTrue(Transactions.DATA_CATEGORY in get_header(self.filters, Transactions))
+		self.assertTrue(AccountNames.DATA_CATEGORY in get_header(self.filters, AccountNames))
+		self.assertTrue(DebtorsCreditors.DATA_CATEGORY in get_header(self.filters, DebtorsCreditors))
 
 	def test_csv(self):
 		test_data = [

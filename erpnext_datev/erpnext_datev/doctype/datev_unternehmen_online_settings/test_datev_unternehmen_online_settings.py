@@ -4,5 +4,6 @@
 # import frappe
 import unittest
 
+
 class TestDATEVUnternehmenOnlineSettings(unittest.TestCase):
 	pass

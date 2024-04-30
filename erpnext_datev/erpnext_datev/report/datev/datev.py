@@ -10,16 +10,15 @@ Provide a report and downloadable CSV according to the German DATEV format.
 import json
 
 import frappe
+from erpnext.accounts.utils import get_fiscal_year
 from frappe import _
 
-from erpnext.accounts.utils import get_fiscal_year
 from erpnext_datev.utils.datev_constants import (
 	AccountNames,
 	DebtorsCreditors,
 	Transactions,
 )
 from erpnext_datev.utils.datev_csv import get_datev_csv, zip_and_download
-
 
 COLUMNS = [
 	{
@@ -159,14 +158,9 @@ def execute(filters=None):
 		temp, opening = frappe.get_value(
 			"DATEV Settings",
 			filters.get("company"),
-			["temporary_against_account_number", "opening_against_account_number"]
+			["temporary_against_account_number", "opening_against_account_number"],
 		)
-		filters.update(
-			{
-				"against_account": temp,
-				"opening_account": opening or temp
-			}
-		)
+		filters.update({"against_account": temp, "opening_account": opening or temp})
 		data = get_transactions(filters, as_dict=0)
 
 	return COLUMNS, data
@@ -189,9 +183,7 @@ def validate(filters):
 	validate_fiscal_year(from_date, to_date, company)
 
 	if not frappe.db.exists("DATEV Settings", filters.get("company")):
-		msg = _("Please create DATEV Settings for Company {}").format(
-			filters.get("company")
-		)
+		msg = _("Please create DATEV Settings for Company {}").format(filters.get("company"))
 		frappe.log_error(message=msg, title=_("DATEV Settings missing"))
 		return False
 
@@ -202,19 +194,13 @@ def validate_fiscal_year(from_date, to_date, company):
 	from_fiscal_year = get_fiscal_year(date=from_date, company=company)
 	to_fiscal_year = get_fiscal_year(date=to_date, company=company)
 	if from_fiscal_year != to_fiscal_year:
-		frappe.throw(
-			_("Dates {} and {} are not in the same fiscal year.").format(
-				from_date, to_date
-			)
-		)
+		frappe.throw(_("Dates {} and {} are not in the same fiscal year.").format(from_date, to_date))
 
 
 def get_transactions(filters, as_dict=1):
 	def run(params_method, filters):
 		extra_fields, extra_joins, extra_filters = params_method(filters)
-		return run_query(
-			filters, extra_fields, extra_joins, extra_filters, as_dict=as_dict
-		)
+		return run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=as_dict)
 
 	def sort_by(row):
 		# "Belegdatum" is in the fifth column when list format is used
@@ -320,11 +306,7 @@ def get_generic_params(filters):
 
 	if filters.get("exclude_voucher_types"):
 		# exclude voucher types that are queried by a dedicated method
-		exclude = "({})".format(
-			", ".join(
-				"'{}'".format(key) for key in filters.get("exclude_voucher_types")
-			)
-		)
+		exclude = "({})".format(", ".join("'{}'".format(key) for key in filters.get("exclude_voucher_types")))
 		extra_filters = "AND gl.voucher_type NOT IN {}".format(exclude)
 
 	# if voucher type filter is set, allow only this type
@@ -586,7 +568,8 @@ def download_datev_csv(filters):
 			"skr": "04" if "SKR04" in coa else ("03" if "SKR03" in coa else ""),
 			"account_number_length": datev_settings.account_number_length,
 			"against_account": datev_settings.temporary_against_account_number,
-			"opening_account": datev_settings.opening_against_account_number or datev_settings.temporary_against_account_number,
+			"opening_account": datev_settings.opening_against_account_number
+			or datev_settings.temporary_against_account_number,
 		}
 	)
 
@@ -601,27 +584,19 @@ def download_datev_csv(filters):
 		[
 			{
 				"file_name": "EXTF_Buchungsstapel.csv",
-				"csv_data": get_datev_csv(
-					transactions, filters, csv_class=Transactions
-				),
+				"csv_data": get_datev_csv(transactions, filters, csv_class=Transactions),
 			},
 			{
 				"file_name": "EXTF_Kontenbeschriftungen.csv",
-				"csv_data": get_datev_csv(
-					account_names, filters, csv_class=AccountNames
-				),
+				"csv_data": get_datev_csv(account_names, filters, csv_class=AccountNames),
 			},
 			{
 				"file_name": "EXTF_Kunden.csv",
-				"csv_data": get_datev_csv(
-					customers, filters, csv_class=DebtorsCreditors
-				),
+				"csv_data": get_datev_csv(customers, filters, csv_class=DebtorsCreditors),
 			},
 			{
 				"file_name": "EXTF_Lieferanten.csv",
-				"csv_data": get_datev_csv(
-					suppliers, filters, csv_class=DebtorsCreditors
-				),
+				"csv_data": get_datev_csv(suppliers, filters, csv_class=DebtorsCreditors),
 			},
 		],
 	)
