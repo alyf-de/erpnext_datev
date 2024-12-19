@@ -68,6 +68,16 @@ def attach_print(doctype, name, language, print_format):
 	with print_language(language):
 		data = frappe.get_print(doctype, name, print_format, as_pdf=True)
 
+	if doctype == "Sales Invoice" and "eu_einvoice" in frappe.get_installed_apps():
+		try:
+			from eu_einvoice.european_e_invoice.custom.sales_invoice import attach_xml_to_pdf
+
+			data = attach_xml_to_pdf(name, data)
+		except Exception:
+			msg = _("Failed to attach XML to Sales Invoice PDF for DATEV")
+			frappe.log_error(title=msg, reference_doctype=doctype, reference_name=name)
+			frappe.msgprint(msg, indicator="red", alert=True)
+
 	file = frappe.new_doc("File")
 	file.file_name = f"{name}.pdf"
 	file.content = data
