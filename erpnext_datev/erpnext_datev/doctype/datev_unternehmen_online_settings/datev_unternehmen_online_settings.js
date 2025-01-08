@@ -6,7 +6,10 @@ frappe.ui.form.on("DATEV Unternehmen Online Settings", {
 		frm.set_query("voucher_type", "datev_voucher_config", function (doc, cdt, cdn) {
 			return {
 				filters: {
-					name: ["in", ["Sales Invoice", "Purchase Invoice", "Expense Claim"]],
+					name: [
+						"in",
+						["Sales Invoice", "Purchase Invoice", "Expense Claim", "E Invoice Import"],
+					],
 				},
 			};
 		});
