@@ -552,6 +552,8 @@ def download_datev_csv(filters):
 	Arguments / Params:
 	filters -- dict of filters to be passed to the sql query
 	"""
+	frappe.only_for(["Accounts User", "Accounts Manager"])
+
 	if isinstance(filters, str):
 		filters = json.loads(filters)
 
