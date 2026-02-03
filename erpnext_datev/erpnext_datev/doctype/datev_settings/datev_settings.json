@@ -15,7 +15,8 @@
   "account_number_length",
   "column_break_6",
   "temporary_against_account_number",
-  "opening_against_account_number"
+  "opening_against_account_number",
+  "exclude_export_of_sales_invoice_due_date"
  ],
  "fields": [
   {
@@ -84,11 +85,18 @@
    "fieldname": "opening_against_account_number",
    "fieldtype": "Data",
    "label": "Opening Against Account Number"
+  },
+  {
+   "default": "0",
+   "description": "The Sales Invoice due date may raise \"OPOS\" errors during the import into DATEV.",
+   "fieldname": "exclude_export_of_sales_invoice_due_date",
+   "fieldtype": "Check",
+   "label": "Exclude Export of Sales Invoice Due Date"
   }
  ],
  "grid_page_length": 50,
  "links": [],
- "modified": "2025-06-12 16:30:22.776994",
+ "modified": "2026-02-02 22:22:15.366769",
  "modified_by": "Administrator",
  "module": "Erpnext Datev",
  "name": "DATEV Settings",
