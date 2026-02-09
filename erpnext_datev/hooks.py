@@ -1,5 +1,3 @@
-from . import __version__ as app_version
-
 app_name = "erpnext_datev"
 app_title = "ERPNext DATEV Integration"
 app_publisher = "ALYF GmbH"
