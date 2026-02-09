@@ -32,11 +32,11 @@ def send(doc, method):
 
 	if voucher_config.attach_print:
 		document_language = doc.language if hasattr(doc, "language") else None
-		print_language = document_language or settings.default_print_language or frappe.db.get_default("lang")
+		language = document_language or settings.default_print_language or frappe.db.get_default("lang")
 		filename = attach_print(
 			doc.doctype,
 			doc.name,
-			print_language,
+			language,
 			voucher_config.print_format,
 		)
 		attachments.append(filename)
