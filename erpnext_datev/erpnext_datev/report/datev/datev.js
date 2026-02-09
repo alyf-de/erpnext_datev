@@ -6,8 +6,7 @@ frappe.query_reports["DATEV"] = {
 			fieldtype: "Link",
 			options: "Company",
 			default:
-				frappe.defaults.get_user_default("Company") ||
-				frappe.defaults.get_global_default("Company"),
+				frappe.defaults.get_user_default("Company") || frappe.defaults.get_global_default("Company"),
 			reqd: 1,
 		},
 		{
@@ -37,9 +36,7 @@ frappe.query_reports["DATEV"] = {
 		frappe.db.exists("DATEV Settings", company).then((settings_exist) => {
 			if (!settings_exist) {
 				frappe.confirm(
-					__(
-						"DATEV Settings for your Company are missing. Would you like to create them now?"
-					),
+					__("DATEV Settings for your Company are missing. Would you like to create them now?"),
 					() => frappe.new_doc("DATEV Settings", { company: company })
 				);
 			}

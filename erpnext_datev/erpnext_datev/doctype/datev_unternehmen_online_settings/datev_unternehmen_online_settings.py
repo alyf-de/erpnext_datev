@@ -46,9 +46,7 @@ def send(doc, method):
 
 	if not attachments:
 		frappe.msgprint(
-			# fmt: off
 			_("{} was not sent to DATEV because no attachments have been found.").format(_(doc.doctype))
-			# fmt: on
 		)
 		return
 

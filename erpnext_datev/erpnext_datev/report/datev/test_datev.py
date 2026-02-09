@@ -59,8 +59,8 @@ def setup_fiscal_year():
 				{
 					"doctype": "Fiscal Year",
 					"year": year,
-					"year_start_date": "{0}-01-01".format(year),
-					"year_end_date": "{0}-12-31".format(year),
+					"year_start_date": f"{year}-01-01",
+					"year_end_date": f"{year}-12-31",
 				}
 			)
 			fiscal_year.insert()

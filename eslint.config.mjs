@@ -23,6 +23,7 @@ export default [
 				is_null: "readonly",
 				in_list: "readonly",
 				has_common: "readonly",
+				moment: "readonly",
 			},
 		},
 		rules: {

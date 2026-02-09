@@ -90,7 +90,7 @@ def get_header(filters, csv_class):
 		# 720 = 7.20
 		"700",
 		csv_class.DATA_CATEGORY,
-		'"%s"' % csv_class.FORMAT_NAME,
+		f'"{csv_class.FORMAT_NAME}"',
 		# Format version (regarding format name)
 		csv_class.FORMAT_VERSION,
 		# Generated on
@@ -100,7 +100,7 @@ def get_header(filters, csv_class):
 		# Origin. Any two symbols, will be replaced by "SV" on import.
 		'"EN"',
 		# I = Exported by
-		'"%s"' % frappe.session.user,
+		f'"{frappe.session.user}"',
 		# J = Imported by -- stays empty
 		"",
 		# K = Tax consultant number (Beraternummer)
@@ -140,7 +140,7 @@ def get_header(filters, csv_class):
 		# TODO: Filter by Accounting Period. In export for closed Accounting Period, this will be "1"
 		"0",
 		# V = Default currency, for example, "EUR"
-		'"%s"' % default_currency if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS else "",
+		f'"{default_currency}"' if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS else "",
 		# reserviert
 		"",
 		# Derivatskennzeichen
@@ -150,7 +150,7 @@ def get_header(filters, csv_class):
 		# reserviert
 		"",
 		# SKR
-		'"%s"' % coa_short_code,
+		f'"{coa_short_code}"',
 		# Branchen-Lösungs-ID
 		"",
 		# reserviert
