@@ -1,19 +1,15 @@
 {
-	"branches": ["version-14", "version-15"],
+	"branches": ["version-14", "version-15", "version-16"],
 	"plugins": [
 		[
-			"@semantic-release/commit-analyzer", {
+			"@semantic-release/commit-analyzer",
+			{
+				"preset": "angular",
 				"releaseRules": [
-					{"breaking": true, "release": "minor"},
-					{"revert": true, "release": "patch"},
-					{"type": "feat", "release": "minor"},
-					{"type": "patch", "release": "minor"},
-					{"type": "fix", "release": "patch"},
-					{"type": "perf", "release": "patch"},
-					{"type": "refactor", "release": "patch"},
-					{"type": "docs", "release": "patch"},
-					{"type": "chore", "release": "patch"},
-					{"type": "ci", "release": "patch"}
+					{
+						"breaking": true,
+						"release": false
+					}
 				]
 			}
 		],
