@@ -1,0 +1,53 @@
+{
+ "app": "erpnext_datev",
+ "creation": "2026-02-09 14:49:23.061664",
+ "docstatus": 0,
+ "doctype": "Workspace Sidebar",
+ "header_icon": "accounting",
+ "idx": 0,
+ "items": [
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "database",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "CSV-Export",
+   "link_to": "DATEV",
+   "link_type": "Report",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "settings",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "CSV-Export Settings",
+   "link_to": "DATEV Settings",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "settings",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Unternehmen Online Settings",
+   "link_to": "DATEV Unternehmen Online Settings",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-02-09 15:04:37.178481",
+ "modified_by": "Administrator",
+ "module": "Erpnext Datev",
+ "name": "DATEV Integration",
+ "owner": "Administrator",
+ "standard": 1,
+ "title": "DATEV Integration"
+}

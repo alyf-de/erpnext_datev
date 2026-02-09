@@ -1,0 +1,21 @@
+{
+ "app": "erpnext_datev",
+ "bg_color": "blue",
+ "creation": "2026-02-09 14:50:37.957307",
+ "docstatus": 0,
+ "doctype": "Desktop Icon",
+ "hidden": 0,
+ "icon_type": "Link",
+ "idx": 0,
+ "label": "DATEV Integration",
+ "link_to": "DATEV Integration",
+ "link_type": "Workspace Sidebar",
+ "logo_url": "/assets/erpnext_datev/img/logo.png",
+ "modified": "2026-02-09 14:55:17.114958",
+ "modified_by": "Administrator",
+ "name": "DATEV Integration",
+ "owner": "Administrator",
+ "restrict_removal": 0,
+ "roles": [],
+ "standard": 1
+}
