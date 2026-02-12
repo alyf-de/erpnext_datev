@@ -25,7 +25,14 @@ COLUMNS = [
 		"label": "Umsatz (ohne Soll/Haben-Kz)",
 		"fieldname": "Umsatz (ohne Soll/Haben-Kz)",
 		"fieldtype": "Currency",
+		"options": "currency",
 		"width": 100,
+	},
+	{
+		"label": "currency",
+		"fieldname": "currency",
+		"fieldtype": "Data",
+		"hidden": 1,
 	},
 	{
 		"label": "Soll/Haben-Kennzeichen",
@@ -233,7 +240,10 @@ def get_transactions(filters, as_dict=1):
 
 	def sort_by(row):
 		# "Belegdatum" is in the fifth column when list format is used
-		return row["Belegdatum" if as_dict else 5]
+		belegdatum = row["Belegdatum" if as_dict else 5]
+		if belegdatum is None:
+			return "9999-12-31"
+		return str(belegdatum)
 
 	type_map = {
 		# specific query methods for some voucher types
@@ -370,10 +380,19 @@ def run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1):
 		SELECT
 
 			/* either debit or credit amount; always positive */
-			case ROUND(gl.debit_in_transaction_currency, 2) when 0 then ROUND(gl.credit_in_transaction_currency, 2) else ROUND(gl.debit_in_transaction_currency, 2) end as 'Umsatz (ohne Soll/Haben-Kz)',
+			/* Fallback: debit_in_transaction_currency -> debit -> credit_in_transaction_currency -> credit */
+			CASE 
+				WHEN ROUND(gl.debit_in_transaction_currency, 2) != 0 THEN ROUND(gl.debit_in_transaction_currency, 2)
+				WHEN ROUND(gl.debit, 2) != 0 THEN ROUND(gl.debit, 2)
+				WHEN ROUND(gl.credit_in_transaction_currency, 2) != 0 THEN ROUND(gl.credit_in_transaction_currency, 2)
+				ELSE ROUND(gl.credit, 2)
+			END as 'Umsatz (ohne Soll/Haben-Kz)',
+
+			/* Currency: transaction_currency with fallback to company default_currency */
+			COALESCE(NULLIF(gl.transaction_currency, ''), company.default_currency) as 'currency',
 
 			/* 'H' when credit, 'S' when debit */
-			case ROUND(gl.debit_in_transaction_currency, 2) when 0 then 'H' else 'S' end as 'Soll/Haben-Kennzeichen',
+			case ROUND(gl.debit, 2) when 0 then 'H' else 'S' end as 'Soll/Haben-Kennzeichen',
 
 			/* WKZ Währungskennzeichen (only when transaction currency differs from company currency) */
 			CASE WHEN gl.transaction_currency != company.default_currency THEN LEFT(gl.transaction_currency, 3) ELSE '' END as 'WKZ Umsatz',
