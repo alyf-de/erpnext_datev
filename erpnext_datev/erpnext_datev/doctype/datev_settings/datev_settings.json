@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_bulk_edit": 1,
  "autoname": "field:client",
  "creation": "2022-02-17 23:29:46.086115",
  "doctype": "DocType",
@@ -88,7 +89,7 @@
  ],
  "grid_page_length": 50,
  "links": [],
- "modified": "2025-06-12 16:30:22.776994",
+ "modified": "2026-07-27 23:03:02.739110",
  "modified_by": "Administrator",
  "module": "Erpnext Datev",
  "name": "DATEV Settings",
