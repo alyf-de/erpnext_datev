@@ -47,7 +47,7 @@ def get_datev_csv(data, filters, csv_class):
 		# European decimal seperator
 		decimal=",",
 		# Windows "ANSI" encoding
-		encoding="latin_1",
+		encoding="cp1252",
 		# format date as DDMM
 		date_format="%d%m",
 		# Windows line terminator
@@ -60,10 +60,10 @@ def get_datev_csv(data, filters, csv_class):
 		quoting=QUOTE_NONNUMERIC,
 	)
 
-	data = data.encode("latin_1", errors="replace")
+	data = data.encode("cp1252", errors="replace")
 
 	header = get_header(filters, csv_class)
-	header = ";".join(header).encode("latin_1", errors="replace")
+	header = ";".join(header).encode("cp1252", errors="replace")
 
 	# 1st Row: Header with meta data
 	# 2nd Row: Data heading (Überschrift der Nutzdaten), included in `data` here.
