@@ -539,8 +539,8 @@ def get_account_names(filters):
 	)
 
 
-@frappe.whitelist()
-def download_datev_csv(filters):
+@frappe.whitelist(methods=["GET"])
+def download_datev_csv(filters: str | dict):
 	"""
 	Provide accounting entries for download in DATEV format.
 
@@ -550,7 +550,7 @@ def download_datev_csv(filters):
 	GET /api/method/erpnext_datev.erpnext_datev.report.datev.datev.download_datev_csv
 
 	Arguments / Params:
-	filters -- dict of filters to be passed to the sql query
+	filters -- str or dict of filters to be passed to the sql query
 	"""
 	frappe.only_for(["Accounts User", "Accounts Manager"])
 
