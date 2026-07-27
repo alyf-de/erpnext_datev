@@ -559,11 +559,12 @@ def download_datev_csv(filters: str | dict):
 
 	validate(filters)
 
-	frappe.has_permission("Company", doc=filters.get("company"), throw=True)
-
 	company = filters.get("company")
+	company_doc = frappe.get_doc("Company", company)
+	company_doc.check_permission() # user should not be restricted from accessing the company
+
 	fiscal_year = get_fiscal_year(date=filters.get("from_date"), company=company)
-	coa = frappe.get_value("Company", company, "chart_of_accounts")
+	coa = company_doc.chart_of_accounts
 	datev_settings = frappe.get_doc("DATEV Settings", company)
 
 	filters.update(
