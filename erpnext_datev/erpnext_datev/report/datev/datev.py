@@ -539,8 +539,8 @@ def get_account_names(filters):
 	)
 
 
-@frappe.whitelist()
-def download_datev_csv(filters):
+@frappe.whitelist(methods=["GET"])
+def download_datev_csv(filters: str | dict):
 	"""
 	Provide accounting entries for download in DATEV format.
 
@@ -550,7 +550,7 @@ def download_datev_csv(filters):
 	GET /api/method/erpnext_datev.erpnext_datev.report.datev.datev.download_datev_csv
 
 	Arguments / Params:
-	filters -- dict of filters to be passed to the sql query
+	filters -- str or dict of filters to be passed to the sql query
 	"""
 	frappe.only_for(["Accounts User", "Accounts Manager"])
 
@@ -559,11 +559,12 @@ def download_datev_csv(filters):
 
 	validate(filters)
 
-	frappe.has_permission("Company", doc=filters.get("company"), throw=True)
-
 	company = filters.get("company")
+	company_doc = frappe.get_doc("Company", company)
+	company_doc.check_permission() # user should not be restricted from accessing the company
+
 	fiscal_year = get_fiscal_year(date=filters.get("from_date"), company=company)
-	coa = frappe.get_value("Company", company, "chart_of_accounts")
+	coa = company_doc.chart_of_accounts
 	datev_settings = frappe.get_doc("DATEV Settings", company)
 
 	filters.update(

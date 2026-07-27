@@ -9,6 +9,21 @@ from frappe.translate import print_language
 
 
 class DATEVUnternehmenOnlineSettings(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from erpnext_datev.erpnext_datev.doctype.datev_voucher_config.datev_voucher_config import DATEVVoucherConfig
+		from frappe.types import DF
+
+		datev_voucher_config: DF.Table[DATEVVoucherConfig]
+		default_print_language: DF.Link | None
+		enabled: DF.Check
+		sender: DF.Link | None
+	# end: auto-generated types
+
 	def validate(self):
 		for voucher_config in self.datev_voucher_config:
 			if not voucher_config.attach_print and not voucher_config.attach_files:
