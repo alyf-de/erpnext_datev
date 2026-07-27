@@ -559,6 +559,8 @@ def download_datev_csv(filters):
 
 	validate(filters)
 
+	frappe.has_permission("Company", doc=filters.get("company"), throw=True)
+
 	company = filters.get("company")
 	fiscal_year = get_fiscal_year(date=filters.get("from_date"), company=company)
 	coa = frappe.get_value("Company", company, "chart_of_accounts")
