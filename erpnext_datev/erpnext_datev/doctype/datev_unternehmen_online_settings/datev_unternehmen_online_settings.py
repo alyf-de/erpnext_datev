@@ -12,27 +12,6 @@ from frappe.utils.data import evaluate_filters
 
 
 class DATEVUnternehmenOnlineSettings(Document):
-<<<<<<< HEAD
-=======
-	# begin: auto-generated types
-	# This code is auto-generated. Do not modify anything in this block.
-
-	from typing import TYPE_CHECKING
-
-	if TYPE_CHECKING:
-		from frappe.types import DF
-
-		from erpnext_datev.erpnext_datev.doctype.datev_voucher_config.datev_voucher_config import (
-			DATEVVoucherConfig,
-		)
-
-		datev_voucher_config: DF.Table[DATEVVoucherConfig]
-		default_print_language: DF.Link | None
-		enabled: DF.Check
-		sender: DF.Link | None
-	# end: auto-generated types
-
->>>>>>> 6235034 (feat(DATEV): filter voucher emails by document fields (#36))
 	def validate(self):
 		for voucher_config in self.datev_voucher_config:
 			if not voucher_config.attach_print and not voucher_config.attach_files:
