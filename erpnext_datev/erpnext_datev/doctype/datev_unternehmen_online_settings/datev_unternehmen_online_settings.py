@@ -1,14 +1,38 @@
 # Copyright (c) 2021, ALYF GmbH and contributors
 # For license information, please see license.txt
 
+import json
+
 import frappe
 from frappe import _
 from frappe.core.doctype.communication.email import make as make_communication
 from frappe.model.document import Document
 from frappe.translate import print_language
+from frappe.utils.data import evaluate_filters
 
 
 class DATEVUnternehmenOnlineSettings(Document):
+<<<<<<< HEAD
+=======
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+
+		from erpnext_datev.erpnext_datev.doctype.datev_voucher_config.datev_voucher_config import (
+			DATEVVoucherConfig,
+		)
+
+		datev_voucher_config: DF.Table[DATEVVoucherConfig]
+		default_print_language: DF.Link | None
+		enabled: DF.Check
+		sender: DF.Link | None
+	# end: auto-generated types
+
+>>>>>>> 6235034 (feat(DATEV): filter voucher emails by document fields (#36))
 	def validate(self):
 		for voucher_config in self.datev_voucher_config:
 			if not voucher_config.attach_print and not voucher_config.attach_files:
@@ -18,13 +42,23 @@ class DATEVUnternehmenOnlineSettings(Document):
 					)
 				)
 
+			try:
+				voucher_config.validate_filters()
+			except Exception as e:
+				frappe.clear_messages()
+				frappe.throw(
+					_("Row #{0}: invalid filters for <b>{1}</b>: {2}").format(
+						voucher_config.idx, _(voucher_config.voucher_type), e
+					)
+				)
+
 
 def send(doc, method):
 	settings = frappe.get_single("DATEV Unternehmen Online Settings")
 	if not settings.enabled:
 		return
 
-	voucher_config = get_voucher_config(settings, doc.doctype)
+	voucher_config = get_voucher_config(settings, doc)
 	if not voucher_config:
 		return
 
@@ -91,12 +125,14 @@ def attach_print(doctype, name, language, print_format):
 	return file.name
 
 
-def get_voucher_config(settings: DATEVUnternehmenOnlineSettings, doctype: str):
-	voucher_config = settings.get("datev_voucher_config", filters={"voucher_type": doctype})
-	if not voucher_config:
-		return
-
-	return voucher_config[0]
+def get_voucher_config(settings: DATEVUnternehmenOnlineSettings, doc):
+	"""Return the first voucher config for this DocType whose filters match the document."""
+	for voucher_config in settings.get("datev_voucher_config", filters={"voucher_type": doc.doctype}):
+		if voucher_config.filters:
+			filters = json.loads(voucher_config.filters)
+			if filters and not evaluate_filters(doc, filters):
+				continue
+		return voucher_config
 
 
 def get_attached_files(doctype: str, docname: str):
