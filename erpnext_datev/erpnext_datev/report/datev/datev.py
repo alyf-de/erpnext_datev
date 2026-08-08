@@ -236,11 +236,11 @@ def validate_fiscal_year(from_date, to_date, company):
 def get_transactions(filters, as_dict=1):
 	def run(params_method, filters):
 		extra_fields, extra_joins, extra_filters = params_method(filters)
-		return run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=as_dict)
+		# Always fetch dicts so merge/sort can use field names; convert later if needed.
+		return run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1)
 
 	def sort_by(row):
-		# "Belegdatum" is in the fifth column when list format is used
-		belegdatum = row["Belegdatum" if as_dict else 5]
+		belegdatum = row["Belegdatum"]
 		if belegdatum is None:
 			return "9999-12-31"
 		return str(belegdatum)
@@ -266,7 +266,11 @@ def get_transactions(filters, as_dict=1):
 		filters["exclude_voucher_types"] = type_map.keys()
 		transactions.extend(run(params_method=get_generic_params, filters=filters))
 
-	return sorted(transactions, key=sort_by)
+	transactions = sorted(transactions, key=sort_by)
+	if as_dict:
+		return transactions
+
+	return [list(row.values()) for row in transactions]
 
 
 def get_payment_entry_params(filters):
@@ -451,7 +455,7 @@ def run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1):
 
 		{extra_filters}
 
-		ORDER BY 'Belegdatum', gl.voucher_no""".format(
+		ORDER BY gl.posting_date, gl.voucher_no""".format( # Belegdatum is now gl.posting_date
 		extra_fields=extra_fields, extra_joins=extra_joins, extra_filters=extra_filters
 	)
 
