@@ -19,13 +19,19 @@ Integration between [ERPNext](https://github.com/frappe/erpnext) and DATEV.
 
 ## Setup DATEV CSV Export
 
-1. Datev Settings
+1. DATEV Settings
 
     Configure you client number, you tax consultant's number and a temporary against account. We recommend keeping the default against account "9090" as described in the [DATEV Help Center](https://apps.datev.de/help-center/documents/1002764).
 
 2. DATEV Report
 
     Now you can use the report "DATEV". This is a preview of the transactions data. It can be exported, along with the master data, as zip file via the report's menu. Your tax xonsultant can then import your GL Entries into his DATEV system.
+
+3. Generic Settings and Remarks
+
+    The "Remarks" field in Sales and Purchase Invoices is used for the column "Buchungstext". We recommend to use this for a short description of the contents of the invoice. If left blank, ERPNext populates this field with a generic text, that will say nothing about the invoice itself. The field length is limited in the DATEV Export to 60 characters.
+    The DATEV Export will contain the sales invoice due date by default. This may raise an OPOS Error during the import. The export can be opted-out in the DATEV Settings.
+    OPOS (Offene Posten) is not supported by this app.
 
 > [!IMPORTANT]
 > ERPNext does not have automatic VAT deduction ("Automatikkonten") on the GL Entry level. By using the default against account "9090", the automation is disabled.
