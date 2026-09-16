@@ -28,6 +28,9 @@ def get_datev_csv(data, filters, csv_class):
 	result = pd.concat([empty_df, data_df], ignore_index=True)
 
 	if csv_class.DATA_CATEGORY == DataCategory.TRANSACTIONS:
+		# only a float column honours `decimal` below, an object column keeps the dot
+		result["Umsatz (ohne Soll/Haben-Kz)"] = result["Umsatz (ohne Soll/Haben-Kz)"].astype(float)
+
 		result["Belegdatum"] = pd.to_datetime(result["Belegdatum"])
 
 		result["Beleginfo - Inhalt 6"] = pd.to_datetime(result["Beleginfo - Inhalt 6"])

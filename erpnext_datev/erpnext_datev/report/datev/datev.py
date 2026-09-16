@@ -20,6 +20,8 @@ from erpnext_datev.utils.datev_constants import (
 )
 from erpnext_datev.utils.datev_csv import get_datev_csv, zip_and_download
 
+from .gdpdu import get_gdpdu_files
+
 COLUMNS = [
 	{
 		"label": "Umsatz (ohne Soll/Haben-Kz)",
@@ -561,7 +563,7 @@ def download_datev_csv(filters: str | dict):
 
 	company = filters.get("company")
 	company_doc = frappe.get_doc("Company", company)
-	company_doc.check_permission() # user should not be restricted from accessing the company
+	company_doc.check_permission()  # user should not be restricted from accessing the company
 
 	fiscal_year = get_fiscal_year(date=filters.get("from_date"), company=company)
 	coa = company_doc.chart_of_accounts
@@ -578,30 +580,34 @@ def download_datev_csv(filters: str | dict):
 		}
 	)
 
-	transactions = get_transactions(filters)
-	account_names = get_account_names(filters)
-	customers = get_customers(filters)
-	suppliers = get_suppliers(filters)
+	tables = [
+		("EXTF_Buchungsstapel.csv", "Buchungsstapel", Transactions, get_transactions(filters)),
+		("EXTF_Kontenbeschriftungen.csv", "Kontenbeschriftungen", AccountNames, get_account_names(filters)),
+		("EXTF_Kunden.csv", "Kunden", DebtorsCreditors, get_customers(filters)),
+		("EXTF_Lieferanten.csv", "Lieferanten", DebtorsCreditors, get_suppliers(filters)),
+	]
+
+	files = [
+		{
+			"file_name": file_name,
+			"csv_data": get_datev_csv(data, filters, csv_class=csv_class),
+		}
+		for file_name, _table_name, csv_class, data in tables
+	]
+
+	# GDPdU: describe the delivered files, so they can be evaluated by machine
+	files.extend(
+		get_gdpdu_files(
+			[
+				(file_name, table_name, csv_class.COLUMNS)
+				for file_name, table_name, csv_class, _data in tables
+			],
+			valid_from=frappe.utils.formatdate(filters.get("from_date"), "yyyyMMdd"),
+			valid_to=frappe.utils.formatdate(filters.get("to_date"), "yyyyMMdd"),
+			supplier_name=company_doc.company_name,
+			supplier_location=company_doc.country or "",
+		)
+	)
 
 	zip_name = "{} DATEV.zip".format(frappe.utils.datetime.date.today())
-	zip_and_download(
-		zip_name,
-		[
-			{
-				"file_name": "EXTF_Buchungsstapel.csv",
-				"csv_data": get_datev_csv(transactions, filters, csv_class=Transactions),
-			},
-			{
-				"file_name": "EXTF_Kontenbeschriftungen.csv",
-				"csv_data": get_datev_csv(account_names, filters, csv_class=AccountNames),
-			},
-			{
-				"file_name": "EXTF_Kunden.csv",
-				"csv_data": get_datev_csv(customers, filters, csv_class=DebtorsCreditors),
-			},
-			{
-				"file_name": "EXTF_Lieferanten.csv",
-				"csv_data": get_datev_csv(suppliers, filters, csv_class=DebtorsCreditors),
-			},
-		],
-	)
+	zip_and_download(zip_name, files)

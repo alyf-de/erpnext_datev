@@ -1,5 +1,7 @@
+import xml.etree.ElementTree as ET
 import zipfile
 from io import BytesIO
+from pathlib import Path
 from unittest import TestCase
 
 import frappe
@@ -14,6 +16,11 @@ from erpnext_datev.erpnext_datev.report.datev.datev import (
 	get_customers,
 	get_suppliers,
 	get_transactions,
+)
+from erpnext_datev.erpnext_datev.report.datev.gdpdu import (
+	DTD_FILE_NAME,
+	get_gdpdu_files,
+	get_index_xml,
 )
 from erpnext_datev.utils.datev_constants import (
 	AccountNames,
@@ -254,3 +261,99 @@ class TestDatev(TestCase):
 		zip_buffer.write(frappe.response["filecontent"])
 
 		self.assertTrue(zipfile.is_zipfile(zip_buffer))
+
+
+class TestGdpdu(TestCase):
+	"""Build the GDPdU index.xml without touching the database."""
+
+	def test_index_xml(self):
+		tables = [
+			("EXTF_Buchungsstapel.csv", "Buchungsstapel", Transactions.COLUMNS),
+			("EXTF_Kontenbeschriftungen.csv", "Kontenbeschriftungen", AccountNames.COLUMNS),
+			("EXTF_Kunden.csv", "Kunden", DebtorsCreditors.COLUMNS),
+			("EXTF_Lieferanten.csv", "Lieferanten", DebtorsCreditors.COLUMNS),
+		]
+		xml = get_index_xml(
+			tables,
+			valid_from="20240101",
+			valid_to="20241231",
+			supplier_name="_Test GmbH & Co. KG",
+			supplier_location="Germany",
+		)
+
+		assert xml.startswith(b'<?xml version="1.0" encoding="utf-8" standalone="no"?>')
+		assert b'<!DOCTYPE DataSet SYSTEM "gdpdu-01-03-2019.dtd">' in xml
+		# a literal CR would be normalized to LF by the parser
+		assert b"<RecordDelimiter>&#13;&#10;</RecordDelimiter>" in xml
+		# the ampersand of the company name must be escaped
+		assert b"_Test GmbH &amp; Co. KG" in xml
+
+		data_set = ET.fromstring(xml)
+		assert data_set.findtext("Version") == "1.0"
+		assert data_set.findtext("DataSupplier/Name") == "_Test GmbH & Co. KG"
+		assert data_set.findtext("DataSupplier/Location") == "Germany"
+
+		described = data_set.findall("Media/Table")
+		assert [t.findtext("URL") for t in described] == [t[0] for t in tables]
+		assert [t.findtext("Name") for t in described] == [t[1] for t in tables]
+
+		transactions = described[0]
+		# the DTD prescribes the order of the children, not just their presence
+		for table in described:
+			assert [child.tag for child in table] == [
+				"URL",
+				"Name",
+				"Validity",
+				"ANSI",
+				"DecimalSymbol",
+				"DigitGroupingSymbol",
+				"Range",
+				"VariableLength",
+			]
+		assert transactions.findtext("Validity/Range/From") == "20240101"
+		assert transactions.findtext("Validity/Range/To") == "20241231"
+		assert transactions.findtext("Validity/Format") == "YYYYMMDD"
+		# cp1252 output
+		assert transactions.find("ANSI") is not None
+		assert transactions.findtext("DecimalSymbol") == ","
+		assert transactions.findtext("DigitGroupingSymbol") == "."
+		# row 1 is the DATEV meta header, row 2 holds the column headings
+		assert transactions.findtext("Range/From") == "3"
+
+		variable_length = transactions.find("VariableLength")
+		assert variable_length.findtext("ColumnDelimiter") == ";"
+		assert variable_length.findtext("TextEncapsulator") == '"'
+
+		# every column, in the order of the file, with exactly one datatype
+		columns = variable_length.findall("VariableColumn")
+		assert [c.findtext("Name") for c in columns] == list(Transactions.COLUMNS)
+		for column in columns:
+			assert column[0].tag == "Name"
+			assert column[-1].tag in ("AlphaNumeric", "Numeric", "Date")
+
+		by_name = {c.findtext("Name"): c for c in columns}
+		assert by_name["Umsatz (ohne Soll/Haben-Kz)"].findtext("Numeric/Accuracy") == "2"
+		# DDMM is no valid date mask, the standard has no symbol for "no year"
+		assert by_name["Belegdatum"].find("AlphaNumeric") is not None
+		assert by_name["Belegdatum"].findtext("Description")
+		assert by_name["Fälligkeit"].findtext("Date/Format") == "DDMMYYYY"
+		assert by_name["Konto"].find("AlphaNumeric") is not None
+
+		# master data tables are keyed by their first column
+		accounts = described[1].find("VariableLength")
+		assert accounts.findtext("VariablePrimaryKey/Name") == "Konto"
+
+		# links must point at a table that is part of the data set
+		table_names = {t.findtext("Name") for t in described}
+		foreign_keys = data_set.findall("Media/Table/VariableLength/ForeignKey")
+		assert foreign_keys
+		for foreign_key in foreign_keys:
+			assert foreign_key.findtext("References") in table_names
+			assert foreign_key.findtext("Name") in by_name
+
+	def test_gdpdu_files(self):
+		"""index.xml and its DTD travel together."""
+		files = get_gdpdu_files([], "20240101", "20241231", "_Test GmbH", "Germany")
+		assert [f["file_name"] for f in files] == ["index.xml", DTD_FILE_NAME]
+		assert b"<!ELEMENT DataSet" in files[1]["csv_data"]
+		assert (Path(__file__).parent / DTD_FILE_NAME).is_file()
