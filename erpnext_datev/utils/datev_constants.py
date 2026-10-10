@@ -186,6 +186,11 @@ TRANSACTION_COLUMNS = [
 	"Steuersatz",
 	# Beispiel: DE für Deutschland
 	"Land",
+	"Abrechnungsreferenz",
+	"BVV-Position",
+	"EU-Land u. USt-IdNr. (Ursprung)",
+	"EU-Steuersatz (Ursprung)",
+	"Abw. Skontokonto",
 ]
 
 DEBTOR_CREDITOR_COLUMNS = [
@@ -457,6 +462,8 @@ ACCOUNT_NAME_COLUMNS = [
 	# Language of the account name
 	# "de-DE" or "en-GB"
 	"Sprach-ID",
+	# Kontenbeschriftung lang 300 characters
+	"Kontenbeschriftung lang",
 ]
 
 

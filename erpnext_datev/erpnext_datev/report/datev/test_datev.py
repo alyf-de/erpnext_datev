@@ -1,14 +1,17 @@
 import zipfile
+from datetime import date
 from io import BytesIO
 from unittest import TestCase
+from unittest.mock import patch
 
 import frappe
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import (
 	create_sales_invoice,
 )
-from frappe.utils import cstr, now_datetime, today
+from frappe.utils import cstr, getdate, now_datetime, today
 
 from erpnext_datev.erpnext_datev.report.datev.datev import (
+	COLUMNS,
 	download_datev_csv,
 	get_account_names,
 	get_customers,
@@ -142,6 +145,39 @@ def make_datev_settings(company):
 				"temporary_against_account_number": "9999",
 			}
 		).insert()
+
+
+class TestDatevTransactionSort(TestCase):
+	def test_list_rows_sorted_by_belegdatum(self):
+		"""Positional rows must sort by Belegdatum, not by column index 5 (Basis-Umsatz)."""
+		self.assertEqual(COLUMNS[5]["fieldname"], "Basis-Umsatz")
+		belegdatum_idx = next(i for i, col in enumerate(COLUMNS) if col["fieldname"] == "Belegdatum")
+
+		def make_row(belegdatum, basis_umsatz):
+			row = {col["fieldname"]: None for col in COLUMNS}
+			row["Basis-Umsatz"] = basis_umsatz
+			row["Belegdatum"] = belegdatum
+			return frappe._dict(row)
+
+		# Later date first; smaller Basis-Umsatz so a wrong index-5 sort would keep this order
+		later = make_row(date(2026, 2, 2), "1")
+		earlier = make_row(date(2026, 2, 1), "999")
+
+		filters = {
+			"company": "_Test",
+			"from_date": "2026-02-01",
+			"to_date": "2026-02-02",
+			"voucher_type": "Payment Entry",
+		}
+
+		with patch(
+			"erpnext_datev.erpnext_datev.report.datev.datev.run_query",
+			return_value=[later, earlier],
+		):
+			rows = get_transactions(filters, as_dict=0)
+
+		dates = [getdate(row[belegdatum_idx]) for row in rows]
+		self.assertEqual(dates, [date(2026, 2, 1), date(2026, 2, 2)])
 
 
 class TestDatev(TestCase):

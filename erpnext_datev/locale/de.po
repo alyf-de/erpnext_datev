@@ -7,24 +7,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ERPNext DATEV Integration VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2025-03-10 12:21+0053\n"
-"PO-Revision-Date: 2024-04-30 17:37+0053\n"
+"POT-Creation-Date: 2026-02-03 08:18+0000\n"
+"PO-Revision-Date: 2026-02-03 09:20+0100\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
+"X-Generator: Poedit 3.8\n"
 
-#: erpnext_datev/erpnext_datev/report/datev/datev.py:173
+#: erpnext_datev/erpnext_datev/report/datev/datev.py:202
 msgid "<b>Company</b> is a mandatory filter."
 msgstr "<b>Unternehmen</b> ist ein Pflichtfilter."
 
-#: erpnext_datev/erpnext_datev/report/datev/datev.py:177
+#: erpnext_datev/erpnext_datev/report/datev/datev.py:206
 msgid "<b>From Date</b> is a mandatory filter."
 msgstr "<b>Von Datum</b> ist ein Pflichtfilter."
 
-#: erpnext_datev/erpnext_datev/report/datev/datev.py:181
+#: erpnext_datev/erpnext_datev/report/datev/datev.py:210
 msgid "<b>To Date</b> is a mandatory filter."
 msgstr "<b>Bis Datum</b> ist ein Pflichtfilter."
 
@@ -101,7 +103,7 @@ msgstr "DATEV-Einstellungen"
 msgid "DATEV Settings for your Company are missing. Would you like to create them now?"
 msgstr "DATEV-Einstellungen für Ihr Unternehmen fehlen. Möchten Sie diese jetzt erstellen?"
 
-#: erpnext_datev/erpnext_datev/report/datev/datev.py:187
+#: erpnext_datev/erpnext_datev/report/datev/datev.py:216
 msgid "DATEV Settings missing"
 msgstr "DATEV-Einstellungen fehlen"
 
@@ -117,7 +119,7 @@ msgstr "DATEV Unternehmen Online-Einstellungen"
 msgid "DATEV Voucher Config"
 msgstr "DATEV Belegkonfiguration"
 
-#: erpnext_datev/erpnext_datev/report/datev/datev.py:197
+#: erpnext_datev/erpnext_datev/report/datev/datev.py:226
 msgid "Dates {} and {} are not in the same fiscal year."
 msgstr "Die Daten {} und {} liegen nicht im gleichen Geschäftsjahr."
 
@@ -138,6 +140,11 @@ msgstr "ERPNext-DATEV"
 #: erpnext_datev/erpnext_datev/doctype/datev_unternehmen_online_settings/datev_unternehmen_online_settings.json
 msgid "Enabled"
 msgstr "Aktiviert"
+
+#. Label of a Check field in DocType 'DATEV Settings'
+#: erpnext_datev/erpnext_datev/doctype/datev_settings/datev_settings.json
+msgid "Exclude Export of Sales Invoice Due Date"
+msgstr "Fälligkeitsdatum vom Export ausschließen"
 
 #: erpnext_datev/erpnext_datev/doctype/datev_unternehmen_online_settings/datev_unternehmen_online_settings.py:79
 msgid "Failed to attach XML to Sales Invoice PDF for DATEV"
@@ -164,7 +171,7 @@ msgstr "Gegenkontonummer für Eröffnungsbuchungen muss {0} Ziffern lang sein"
 msgid "Please configure attachments for voucher type {}."
 msgstr "Bitte konfigurieren Sie Anhänge für Belegart {}."
 
-#: erpnext_datev/erpnext_datev/report/datev/datev.py:186
+#: erpnext_datev/erpnext_datev/report/datev/datev.py:215
 msgid "Please create DATEV Settings for Company {}"
 msgstr "Bitte erstellen Sie DATEV-Einstellungen für Unternehmen {}"
 
@@ -210,6 +217,12 @@ msgstr "Temporäre Gegenkontonummer"
 msgid "Temporary Against Account Number must be {0} digits long"
 msgstr "Temporäre Gegenkontonummer muss {0} Ziffern lang sein"
 
+#. Description of the 'Exclude Export of Sales Invoice Due Date' (Check) field
+#. in DocType 'DATEV Settings'
+#: erpnext_datev/erpnext_datev/doctype/datev_settings/datev_settings.json
+msgid "The Sales Invoice due date may raise \"OPOS\" errors during the import into DATEV."
+msgstr "Das Fälligkeitsdatum in Ausgangsrechnungen kann beim Import in DATEV einen „OPOS“ Fehler auslösen."
+
 #: erpnext_datev/erpnext_datev/report/datev/datev.js:22
 msgid "To Date"
 msgstr "Bis Datum"
@@ -235,4 +248,3 @@ msgstr "Wird als Gegenkontonummer für Eröffnungsbuchungen verwendet"
 #: erpnext_datev/erpnext_datev/doctype/datev_unternehmen_online_settings/datev_unternehmen_online_settings.py:50
 msgid "{} was not sent to DATEV because no attachments have been found."
 msgstr "{} wurde nicht an DATEV gesendet weil keine Anhänge gefunden wurden."
-

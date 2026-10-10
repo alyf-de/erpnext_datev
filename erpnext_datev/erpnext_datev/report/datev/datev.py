@@ -25,7 +25,14 @@ COLUMNS = [
 		"label": "Umsatz (ohne Soll/Haben-Kz)",
 		"fieldname": "Umsatz (ohne Soll/Haben-Kz)",
 		"fieldtype": "Currency",
+		"options": "currency",
 		"width": 100,
+	},
+	{
+		"label": "currency",
+		"fieldname": "currency",
+		"fieldtype": "Data",
+		"hidden": 1,
 	},
 	{
 		"label": "Soll/Haben-Kennzeichen",
@@ -33,7 +40,36 @@ COLUMNS = [
 		"fieldtype": "Data",
 		"width": 100,
 	},
-	{"label": "Konto", "fieldname": "Konto", "fieldtype": "Data", "width": 100},
+	{	
+		"label": "WKZ Umsatz",
+		"fieldname": "WKZ Umsatz",
+		"fieldtype": "Data",
+		"width": 100,
+	},
+	{
+		"label": "Kurs",
+		"fieldname": "Kurs",
+		"fieldtype": "Data",
+		"width": 100,
+	},
+	{
+		"label": "Basis-Umsatz",
+		"fieldname": "Basis-Umsatz",
+		"fieldtype": "Data",
+		"width": 100,
+	},
+	{
+		"label": "WKZ Basis-Umsatz",
+		"fieldname": "WKZ Basis-Umsatz",
+		"fieldtype": "Data",
+		"width": 100,
+	},
+	{
+		"label": "Konto", 
+		"fieldname": "Konto",
+		"fieldtype": "Data",
+		"width": 100
+	},
 	{
 		"label": "Gegenkonto (ohne BU-Schlüssel)",
 		"fieldname": "Gegenkonto (ohne BU-Schlüssel)",
@@ -200,11 +236,14 @@ def validate_fiscal_year(from_date, to_date, company):
 def get_transactions(filters, as_dict=1):
 	def run(params_method, filters):
 		extra_fields, extra_joins, extra_filters = params_method(filters)
-		return run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=as_dict)
+		# Always fetch dicts so merge/sort can use field names; convert later if needed.
+		return run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1)
 
 	def sort_by(row):
-		# "Belegdatum" is in the fifth column when list format is used
-		return row["Belegdatum" if as_dict else 5]
+		belegdatum = row["Belegdatum"]
+		if belegdatum is None:
+			return "9999-12-31"
+		return str(belegdatum)
 
 	type_map = {
 		# specific query methods for some voucher types
@@ -227,7 +266,11 @@ def get_transactions(filters, as_dict=1):
 		filters["exclude_voucher_types"] = type_map.keys()
 		transactions.extend(run(params_method=get_generic_params, filters=filters))
 
-	return sorted(transactions, key=sort_by)
+	transactions = sorted(transactions, key=sort_by)
+	if as_dict:
+		return transactions
+
+	return [list(row.values()) for row in transactions]
 
 
 def get_payment_entry_params(filters):
@@ -252,17 +295,27 @@ def get_payment_entry_params(filters):
 
 
 def get_sales_invoice_params(filters):
-	extra_fields = """
+	exclude_due_date = frappe.db.get_value(
+		"DATEV Settings",
+		filters.get("company"),
+		"exclude_export_of_sales_invoice_due_date",
+	)
+	due_date = "'' as 'Fälligkeit'" if exclude_due_date else "si.due_date as 'Fälligkeit'"
+
+	extra_fields = f"""
 		, '' as 'Beleginfo - Art 5'
 		, '' as 'Beleginfo - Inhalt 5'
 		, '' as 'Beleginfo - Art 6'
 		, '' as 'Beleginfo - Inhalt 6'
-		, si.due_date as 'Fälligkeit'
+		, {due_date}
+		, customer.tax_id as 'EU-Mitgliedstaat u. USt-IdNr.'
 	"""
 
 	extra_joins = """
 		LEFT JOIN `tabSales Invoice` si
 		ON gl.voucher_no = si.name
+		LEFT JOIN `tabCustomer` customer
+		ON customer.name = si.customer
 	"""
 
 	extra_filters = """
@@ -274,9 +327,9 @@ def get_sales_invoice_params(filters):
 
 def get_purchase_invoice_params(filters):
 	extra_fields = """
-		, 'Lieferanten-Rechnungsnummer' as 'Beleginfo - Art 5'
+		, 'Lieferant-ReNummer' as 'Beleginfo - Art 5'
 		, pi.bill_no as 'Beleginfo - Inhalt 5'
-		, 'Lieferanten-Rechnungsdatum' as 'Beleginfo - Art 6'
+		, 'Lieferant-ReDatum' as 'Beleginfo - Art 6'
 		, pi.bill_date as 'Beleginfo - Inhalt 6'
 		, pi.due_date as 'Fälligkeit'
 	"""
@@ -331,10 +384,31 @@ def run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1):
 		SELECT
 
 			/* either debit or credit amount; always positive */
-			case ROUND(gl.debit, 2) when 0 then ROUND(gl.credit, 2) else ROUND(gl.debit, 2) end as 'Umsatz (ohne Soll/Haben-Kz)',
+			/* Fallback: debit_in_transaction_currency -> debit -> credit_in_transaction_currency -> credit */
+			CASE 
+				WHEN ROUND(gl.debit_in_transaction_currency, 2) != 0 THEN ROUND(gl.debit_in_transaction_currency, 2)
+				WHEN ROUND(gl.debit, 2) != 0 THEN ROUND(gl.debit, 2)
+				WHEN ROUND(gl.credit_in_transaction_currency, 2) != 0 THEN ROUND(gl.credit_in_transaction_currency, 2)
+				ELSE ROUND(gl.credit, 2)
+			END as 'Umsatz (ohne Soll/Haben-Kz)',
+
+			/* Currency: transaction_currency with fallback to company default_currency */
+			COALESCE(NULLIF(gl.transaction_currency, ''), company.default_currency) as 'currency',
 
 			/* 'H' when credit, 'S' when debit */
 			case ROUND(gl.debit, 2) when 0 then 'H' else 'S' end as 'Soll/Haben-Kennzeichen',
+
+			/* WKZ Währungskennzeichen (only when transaction currency differs from company currency) */
+			CASE WHEN gl.transaction_currency != company.default_currency THEN LEFT(gl.transaction_currency, 3) ELSE '' END as 'WKZ Umsatz',
+
+			/* Kurs (max 4 vor dem Komma, max 6 nach dem Komma; only when transaction currency differs) */
+			CASE WHEN gl.transaction_currency != company.default_currency THEN LEAST(ROUND(gl.transaction_exchange_rate, 6), 9999.999999) ELSE NULL END as 'Kurs',
+
+			/* Basis-Umsatz (only when transaction currency differs from company currency) */
+			CASE WHEN gl.transaction_currency != company.default_currency THEN case ROUND(gl.debit, 2) when 0 then ROUND(gl.credit, 2) else ROUND(gl.debit, 2) end ELSE NULL END as 'Basis-Umsatz',
+
+			/* WKZ Basis-Umsatz (company currency; only when transaction currency differs) */
+			CASE WHEN gl.transaction_currency != company.default_currency THEN LEFT(company.default_currency, 3) ELSE '' END as 'WKZ Basis-Umsatz',
 
 			/* account number or, if empty, party account number */
 			acc.account_number as 'Konto',
@@ -346,16 +420,16 @@ def run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1):
 			'' as 'BU-Schlüssel',
 
 			gl.posting_date as 'Belegdatum',
-			gl.voucher_no as 'Belegfeld 1',
+			LEFT(gl.voucher_no, 36) as 'Belegfeld 1',
 			REPLACE(LEFT(gl.remarks, 60), '\n', ' ') as 'Buchungstext',
-			gl.voucher_type as 'Beleginfo - Art 1',
-			gl.voucher_no as 'Beleginfo - Inhalt 1',
-			gl.against_voucher_type as 'Beleginfo - Art 2',
-			gl.against_voucher as 'Beleginfo - Inhalt 2',
-			gl.party_type as 'Beleginfo - Art 3',
-			gl.party as 'Beleginfo - Inhalt 3',
+			LEFT(gl.voucher_type, 20) as 'Beleginfo - Art 1',
+			LEFT(gl.voucher_no, 210) as 'Beleginfo - Inhalt 1',
+			LEFT(gl.against_voucher_type, 20) as 'Beleginfo - Art 2',
+			LEFT(gl.against_voucher, 210) as 'Beleginfo - Inhalt 2',
+			LEFT(gl.party_type, 20) as 'Beleginfo - Art 3',
+			LEFT(gl.party, 210) as 'Beleginfo - Inhalt 3',
 			case gl.party_type when 'Customer' then 'Debitorennummer' when 'Supplier' then 'Kreditorennummer' else NULL end as 'Beleginfo - Art 4',
-			par.debtor_creditor_number as 'Beleginfo - Inhalt 4'
+			LEFT(par.debtor_creditor_number, 210) as 'Beleginfo - Inhalt 4'
 
 			{extra_fields}
 
@@ -370,6 +444,9 @@ def run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1):
 			AND par.parenttype = gl.party_type
 			AND par.company = %(company)s
 
+			LEFT JOIN `tabCompany` company
+			ON company.name = gl.company
+
 			{extra_joins}
 
 		WHERE gl.company = %(company)s
@@ -378,7 +455,7 @@ def run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1):
 
 		{extra_filters}
 
-		ORDER BY 'Belegdatum', gl.voucher_no""".format(
+		ORDER BY gl.posting_date, gl.voucher_no""".format( # Belegdatum is now gl.posting_date
 		extra_fields=extra_fields, extra_joins=extra_joins, extra_filters=extra_filters
 	)
 
@@ -400,15 +477,15 @@ def get_customers(filters):
 
 			par.debtor_creditor_number as 'Konto',
 			CASE cus.customer_type
-				WHEN 'Company' THEN cus.customer_name
+				WHEN 'Company' THEN LEFT(cus.customer_name, 50)
 				ELSE null
 				END as 'Name (Adressatentyp Unternehmen)',
 			CASE cus.customer_type
-				WHEN 'Individual' THEN TRIM(SUBSTR(cus.customer_name, LOCATE(' ', cus.customer_name)))
+				WHEN 'Individual' THEN LEFT(TRIM(SUBSTR(cus.customer_name, LOCATE(' ', cus.customer_name))), 30)
 				ELSE null
 				END as 'Name (Adressatentyp natürl. Person)',
 			CASE cus.customer_type
-				WHEN 'Individual' THEN SUBSTRING_INDEX(SUBSTRING_INDEX(cus.customer_name, ' ', 1), ' ', -1)
+				WHEN 'Individual' THEN LEFT(SUBSTRING_INDEX(SUBSTRING_INDEX(cus.customer_name, ' ', 1), ' ', -1), 30)
 				ELSE null
 				END as 'Vorname (Adressatentyp natürl. Person)',
 			CASE cus.customer_type
@@ -416,16 +493,16 @@ def get_customers(filters):
 				WHEN 'Company' THEN '2'
 				ELSE '0'
 				END as 'Adressatentyp',
-			adr.address_line1 as 'Straße',
-			adr.pincode as 'Postleitzahl',
-			adr.city as 'Ort',
+			LEFT(adr.address_line1, 36) as 'Straße',
+			LEFT(adr.pincode, 10) as 'Postleitzahl',
+			LEFT(adr.city, 30) as 'Ort',
 			UPPER(country.code) as 'Land',
-			adr.address_line2 as 'Adresszusatz',
-			adr.email_id as 'E-Mail',
-			adr.phone as 'Telefon',
-			adr.fax as 'Fax',
-			cus.website as 'Internet',
-			cus.tax_id as 'Steuernummer'
+			LEFT(adr.address_line2, 36) as 'Adresszusatz',
+			LEFT(adr.email_id, 60) as 'E-Mail',
+			LEFT(adr.phone, 60) as 'Telefon',
+			LEFT(adr.fax, 60) as 'Fax',
+			LEFT(cus.website, 60) as 'Internet',
+			LEFT(cus.tax_id, 20) as 'Steuernummer'
 
 		FROM `tabCustomer` cus
 
@@ -466,15 +543,15 @@ def get_suppliers(filters):
 
 			par.debtor_creditor_number as 'Konto',
 			CASE sup.supplier_type
-				WHEN 'Company' THEN sup.supplier_name
+				WHEN 'Company' THEN LEFT(sup.supplier_name, 50)
 				ELSE null
 				END as 'Name (Adressatentyp Unternehmen)',
 			CASE sup.supplier_type
-				WHEN 'Individual' THEN TRIM(SUBSTR(sup.supplier_name, LOCATE(' ', sup.supplier_name)))
+				WHEN 'Individual' THEN LEFT(TRIM(SUBSTR(sup.supplier_name, LOCATE(' ', sup.supplier_name))), 30)
 				ELSE null
 				END as 'Name (Adressatentyp natürl. Person)',
 			CASE sup.supplier_type
-				WHEN 'Individual' THEN SUBSTRING_INDEX(SUBSTRING_INDEX(sup.supplier_name, ' ', 1), ' ', -1)
+				WHEN 'Individual' THEN LEFT(SUBSTRING_INDEX(SUBSTRING_INDEX(sup.supplier_name, ' ', 1), ' ', -1), 30)
 				ELSE null
 				END as 'Vorname (Adressatentyp natürl. Person)',
 			CASE sup.supplier_type
@@ -482,16 +559,16 @@ def get_suppliers(filters):
 				WHEN 'Company' THEN '2'
 				ELSE '0'
 				END as 'Adressatentyp',
-			adr.address_line1 as 'Straße',
-			adr.pincode as 'Postleitzahl',
-			adr.city as 'Ort',
+			LEFT(adr.address_line1, 36) as 'Straße',
+			LEFT(adr.pincode, 10) as 'Postleitzahl',
+			LEFT(adr.city, 30) as 'Ort',
 			UPPER(country.code) as 'Land',
-			adr.address_line2 as 'Adresszusatz',
-			adr.email_id as 'E-Mail',
-			adr.phone as 'Telefon',
-			adr.fax as 'Fax',
-			sup.website as 'Internet',
-			sup.tax_id as 'Steuernummer',
+			LEFT(adr.address_line2, 36) as 'Adresszusatz',
+			LEFT(adr.email_id, 60) as 'E-Mail',
+			LEFT(adr.phone, 60) as 'Telefon',
+			LEFT(adr.fax, 60) as 'Fax',
+			LEFT(sup.website, 60) as 'Internet',
+			LEFT(sup.tax_id, 20) as 'Steuernummer',
 			case sup.on_hold when 1 then sup.release_date else null end as 'Zahlungssperre bis'
 
 		FROM `tabSupplier` sup
@@ -539,6 +616,24 @@ def get_account_names(filters):
 	)
 
 
+def translate_beleginfo_art(transactions):
+	"""Translate DocType/party type values in Beleginfo - Art 1–6 for CSV export."""
+	beleginfo_art_cols = [
+		"Beleginfo - Art 1",
+		"Beleginfo - Art 2",
+		"Beleginfo - Art 3",
+		"Beleginfo - Art 4",
+		"Beleginfo - Art 5",
+		"Beleginfo - Art 6",
+	]
+	for row in transactions:
+		for col in beleginfo_art_cols:
+			val = row.get(col)
+			if val is not None and str(val).strip():
+				row[col] = _(str(val).strip())
+	return transactions
+
+
 @frappe.whitelist()
 def download_datev_csv(filters):
 	"""
@@ -578,6 +673,7 @@ def download_datev_csv(filters):
 	)
 
 	transactions = get_transactions(filters)
+	transactions = translate_beleginfo_art(transactions)
 	account_names = get_account_names(filters)
 	customers = get_customers(filters)
 	suppliers = get_suppliers(filters)
