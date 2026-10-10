@@ -373,6 +373,7 @@ def run_query(filters, extra_fields, extra_joins, extra_filters, as_dict=1):
 			{extra_joins}
 
 		WHERE gl.company = %(company)s
+		AND gl.is_cancelled = 0
 		AND DATE(gl.posting_date) >= %(from_date)s
 		AND DATE(gl.posting_date) <= %(to_date)s
 
